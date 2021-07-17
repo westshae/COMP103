@@ -134,7 +134,7 @@ public class Sokoban {
      *  move the Worker in the direction,
      *  pull the box into the Worker's old position
      */
-    public void pull(String direction, Position originalBoxPos) {
+    public void pull(String direction) {
         Position boxPos = workerPos.next(direction);   // where box is
         Position newBoxPos = boxPos.next(opposite(direction));   // where box will go
 
@@ -161,7 +161,7 @@ public class Sokoban {
             move(opposite(recentMove.direction));
             moveSave(true,opposite(recentMove.direction), "move",null);
         }else if(recentMove.moveType.equals("push")){
-            pull(opposite(recentMove.direction), recentMove.originalBoxPos);
+            pull(opposite(recentMove.direction));
             moveSave(true,opposite(recentMove.direction), "push",recentMove.originalBoxPos);
 
         }
