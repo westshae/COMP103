@@ -58,14 +58,14 @@ public class Sokoban {
         if ( cells[nextP.row][nextP.col].hasBox() &&
         cells[nextNextP.row][nextNextP.col].isFree() ) { 
             push(direction);
-            moveSave(false,workerDir, workerPos, "push", nextP);
+            moveSave(false,workerDir, "push", nextP);
 
 
             if (isSolved()) { reportWin(); }
         }
         // is the next cell free for the worker to move into?
         else if ( cells[nextP.row][nextP.col].isFree() ) {
-            moveSave(false,workerDir, workerPos, "move", null);
+            moveSave(false,workerDir, "move", null);
             move(direction);
         }
     }
@@ -76,9 +76,8 @@ public class Sokoban {
         String moveType;
         Position originalBoxPos;
 
-        public Move(String directionInput, Position originalWorkerPosInput, String moveTypeInput, Position originalBoxPosInput){
+        public Move(String directionInput, String moveTypeInput, Position originalBoxPosInput){
             direction = directionInput;
-            originalWorkerPos = originalWorkerPosInput;
             moveType=moveTypeInput;
             if(moveTypeInput.equals("push")){
                 originalBoxPos = originalBoxPosInput;
@@ -87,8 +86,8 @@ public class Sokoban {
     }
 
     //Called by movement functions to record the data
-    public void moveSave(boolean isUndo,String direction, Position originalWorkerPos, String moveType, Position originalBoxPos){
-        Move toPush = new Move(direction,originalWorkerPos, moveType, originalBoxPos);
+    public void moveSave(boolean isUndo,String direction, String moveType, Position originalBoxPos){
+        Move toPush = new Move(direction, moveType, originalBoxPos);
         if(isUndo){
             redos.push(toPush);
         }else{
@@ -160,10 +159,10 @@ public class Sokoban {
         Move recentMove = (Move) history.pop();
         if(recentMove.moveType.equals("move")){
             move(opposite(recentMove.direction));
-            moveSave(true,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+            moveSave(true,opposite(recentMove.direction), "move",null);
         }else if(recentMove.moveType.equals("push")){
             pull(opposite(recentMove.direction), recentMove.originalBoxPos);
-            moveSave(true,opposite(recentMove.direction), recentMove.originalWorkerPos, "push",recentMove.originalBoxPos);
+            moveSave(true,opposite(recentMove.direction), "push",recentMove.originalBoxPos);
 
         }
     }
@@ -173,12 +172,12 @@ public class Sokoban {
         Move recentMove = (Move) redos.pop();
         if(recentMove.moveType.equals("move")){
             move(opposite(recentMove.direction));
-            moveSave(false,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+            moveSave(false,opposite(recentMove.direction), "move",null);
 
 
         }else if(recentMove.moveType.equals("push")){
             push(opposite(recentMove.direction));
-            moveSave(false,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+            moveSave(false,opposite(recentMove.direction), "move",null);
 
 
         }
@@ -334,8 +333,8 @@ public class Sokoban {
     public void setupGUI(){
         UI.addButton("New Level", () -> {level++; doLoad();});
         UI.addButton("Restart",   this::doLoad);
-        UI.addButton("Undo", this::undo);
-        UI.addButton("Redo", this::redo);
+        UI.addButton("Undo",      this::undo);
+        UI.addButton("Redo",      this::redo);
         UI.addButton("left",      () -> {moveOrPush("left");});
         UI.addButton("up",        () -> {moveOrPush("up");});
         UI.addButton("down",      () -> {moveOrPush("down");});
