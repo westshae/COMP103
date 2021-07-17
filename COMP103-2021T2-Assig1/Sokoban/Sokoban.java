@@ -30,8 +30,8 @@ public class Sokoban {
     private Position workerPos;         // the position of the worker
     private String workerDir = "left";  // the direction the worker is facing
 
-    private Stack moves = new Stack();
-//    private Stack redos = new Stack();
+    private Stack history = new Stack();
+    private Stack redos = new Stack();
 
 
     /** 
@@ -58,14 +58,14 @@ public class Sokoban {
         if ( cells[nextP.row][nextP.col].hasBox() &&
         cells[nextNextP.row][nextNextP.col].isFree() ) { 
             push(direction);
-            moveSave(workerDir, workerPos, "push", nextP);
+            moveSave(false,workerDir, workerPos, "push", nextP);
 
 
             if (isSolved()) { reportWin(); }
         }
         // is the next cell free for the worker to move into?
         else if ( cells[nextP.row][nextP.col].isFree() ) {
-            moveSave(workerDir, workerPos, "move", null);
+            moveSave(false,workerDir, workerPos, "move", null);
             move(direction);
         }
     }
@@ -87,9 +87,14 @@ public class Sokoban {
     }
 
     //Called by movement functions to record the data
-    public void moveSave(String direction, Position originalWorkerPos, String moveType, Position originalBoxPos){
+    public void moveSave(boolean isUndo,String direction, Position originalWorkerPos, String moveType, Position originalBoxPos){
         Move toPush = new Move(direction,originalWorkerPos, moveType, originalBoxPos);
-        moves.push(toPush);
+        if(isUndo){
+            redos.push(toPush);
+        }else{
+            history.push(toPush);
+
+        }
     }
 
     /**
@@ -151,25 +156,31 @@ public class Sokoban {
 
     //Undos the most recent move
     public void undo(){
-        if(moves.empty()){return;}
-        Move recentMove = (Move) moves.pop();
+        if(history.empty()){return;}
+        Move recentMove = (Move) history.pop();
         if(recentMove.moveType.equals("move")){
             move(opposite(recentMove.direction));
-            moveSave(opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+            moveSave(true,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
         }else if(recentMove.moveType.equals("push")){
             pull(opposite(recentMove.direction), recentMove.originalBoxPos);
-            moveSave(opposite(recentMove.direction), recentMove.originalWorkerPos, "push",recentMove.originalBoxPos);
+            moveSave(true,opposite(recentMove.direction), recentMove.originalWorkerPos, "push",recentMove.originalBoxPos);
 
         }
     }
 
     public void redo(){
-        if(moves.empty()){return;}
-        Move recentMove = (Move) moves.pop();
+        if(redos.empty()){return;}
+        Move recentMove = (Move) redos.pop();
         if(recentMove.moveType.equals("move")){
             move(opposite(recentMove.direction));
+            moveSave(false,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+
+
         }else if(recentMove.moveType.equals("push")){
             push(opposite(recentMove.direction));
+            moveSave(false,opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
+
+
         }
     }
 
