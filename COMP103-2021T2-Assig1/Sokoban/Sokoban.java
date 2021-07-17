@@ -10,6 +10,7 @@
 
 import ecs100.*;
 
+import javax.sound.midi.SysexMessage;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
@@ -67,12 +68,20 @@ public class Sokoban {
         }
     }
 
+    public class Move {
+        String direction;
+        Position originalWorkerPos;
+        Position currentWorkerPos;
+        public Move(String directionInput, Position originalWorkerPosInput, Position currentWorkerPosInput){
+            direction = directionInput;
+            originalWorkerPos = originalWorkerPosInput;
+            currentWorkerPos = currentWorkerPosInput;
+        }
+    }
+
     //Called by movement functions to record the data
     public void moveSave(String direction, Position originalWorkerPos, Position currentWorkerPos){
-        ArrayList<Object> toPush = new ArrayList<>();
-        toPush.add(direction);
-        toPush.add(originalWorkerPos);
-        toPush.add(currentWorkerPos);
+        Move toPush = new Move(direction,originalWorkerPos,currentWorkerPos);
         moves.push(toPush);
     }
 
@@ -120,7 +129,7 @@ public class Sokoban {
     }
 
     public void undo(){
-        System.out.println(moves);
+        Move recentMove = (Move) moves.pop();
     }
 
     /**
