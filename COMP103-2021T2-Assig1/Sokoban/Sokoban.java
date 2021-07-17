@@ -3,12 +3,14 @@
 // You may not distribute it in any other way without permission.
 
 /* Code for COMP103 - 2021T2, Assignment 1
- * Name:
- * Username:
- * ID:
+ * Name: Shae West
+ * Username: westshae
+ * ID: 300565911
  */
 
 import ecs100.*;
+
+import java.lang.reflect.Array;
 import java.util.*;
 import java.io.*;
 import java.nio.file.*;
@@ -27,6 +29,8 @@ public class Sokoban {
     private Position workerPos;         // the position of the worker
     private String workerDir = "left";  // the direction the worker is facing
 
+    private Stack moves = new Stack();
+
 
     /** 
      *  Constructor: load the 0th level.
@@ -44,6 +48,9 @@ public class Sokoban {
     public void moveOrPush(String direction) {
         workerDir = direction;                       // turn worker to face in this direction
 
+        moveSave(workerDir, workerPos, workerPos.next(workerDir));
+        System.out.println(moves);
+
         Position nextP = workerPos.next(direction);  // where the worker would move to
         Position nextNextP = nextP.next(direction);  // where a box would be pushed to
 
@@ -58,6 +65,15 @@ public class Sokoban {
         else if ( cells[nextP.row][nextP.col].isFree() ) { 
             move(direction);
         }
+    }
+
+    //Called by movement functions to record the data
+    public void moveSave(String direction, Position originalWorkerPos, Position currentWorkerPos){
+        ArrayList<Object> toPush = new ArrayList<>();
+        toPush.add(direction);
+        toPush.add(originalWorkerPos);
+        toPush.add(currentWorkerPos);
+        moves.push(toPush);
     }
 
     /**
@@ -101,6 +117,10 @@ public class Sokoban {
     public void pull(String direction) {
         /*# YOUR CODE HERE */
 
+    }
+
+    public void undo(){
+        System.out.println(moves);
     }
 
     /**
@@ -251,6 +271,7 @@ public class Sokoban {
     public void setupGUI(){
         UI.addButton("New Level", () -> {level++; doLoad();});
         UI.addButton("Restart",   this::doLoad);
+        UI.addButton("Undo", this::undo);
         UI.addButton("left",      () -> {moveOrPush("left");});
         UI.addButton("up",        () -> {moveOrPush("up");});
         UI.addButton("down",      () -> {moveOrPush("down");});
