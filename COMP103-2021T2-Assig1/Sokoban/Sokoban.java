@@ -129,7 +129,9 @@ public class Sokoban {
     }
 
     public void undo(){
+        if(moves.empty()){return;}
         Move recentMove = (Move) moves.pop();
+        move(opposite(recentMove.direction));
     }
 
     /**
