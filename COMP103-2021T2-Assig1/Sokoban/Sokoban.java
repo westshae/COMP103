@@ -31,6 +31,7 @@ public class Sokoban {
     private String workerDir = "left";  // the direction the worker is facing
 
     private Stack moves = new Stack();
+//    private Stack redos = new Stack();
 
 
     /** 
@@ -146,16 +147,29 @@ public class Sokoban {
         drawWorker();                                  // display worker at new position
 
         Trace.println("Pull " + direction);   // for debugging
-
     }
 
+    //Undos the most recent move
     public void undo(){
         if(moves.empty()){return;}
         Move recentMove = (Move) moves.pop();
         if(recentMove.moveType.equals("move")){
             move(opposite(recentMove.direction));
+            moveSave(opposite(recentMove.direction), recentMove.originalWorkerPos, "move",null);
         }else if(recentMove.moveType.equals("push")){
             pull(opposite(recentMove.direction), recentMove.originalBoxPos);
+            moveSave(opposite(recentMove.direction), recentMove.originalWorkerPos, "push",recentMove.originalBoxPos);
+
+        }
+    }
+
+    public void redo(){
+        if(moves.empty()){return;}
+        Move recentMove = (Move) moves.pop();
+        if(recentMove.moveType.equals("move")){
+            move(opposite(recentMove.direction));
+        }else if(recentMove.moveType.equals("push")){
+            push(opposite(recentMove.direction));
         }
     }
 
@@ -308,6 +322,7 @@ public class Sokoban {
         UI.addButton("New Level", () -> {level++; doLoad();});
         UI.addButton("Restart",   this::doLoad);
         UI.addButton("Undo", this::undo);
+        UI.addButton("Redo", this::redo);
         UI.addButton("left",      () -> {moveOrPush("left");});
         UI.addButton("up",        () -> {moveOrPush("up");});
         UI.addButton("down",      () -> {moveOrPush("down");});
