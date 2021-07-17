@@ -283,6 +283,8 @@ public class Sokoban {
      * Load a grid of cells (and Worker position) for the current level from a file
      */
     public void doLoad() {
+        history = new Stack();
+        redos = new Stack();
         Path path = Path.of("warehouse" + level + ".txt");
 
         if (! Files.exists(path)) {
