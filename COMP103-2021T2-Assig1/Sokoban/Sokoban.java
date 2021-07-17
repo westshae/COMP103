@@ -49,8 +49,6 @@ public class Sokoban {
     public void moveOrPush(String direction) {
         workerDir = direction;                       // turn worker to face in this direction
 
-        moveSave(workerDir, workerPos, workerPos.next(workerDir));
-        System.out.println(moves);
 
         Position nextP = workerPos.next(direction);  // where the worker would move to
         Position nextNextP = nextP.next(direction);  // where a box would be pushed to
@@ -63,7 +61,8 @@ public class Sokoban {
             if (isSolved()) { reportWin(); }
         }
         // is the next cell free for the worker to move into?
-        else if ( cells[nextP.row][nextP.col].isFree() ) { 
+        else if ( cells[nextP.row][nextP.col].isFree() ) {
+            moveSave(workerDir, workerPos);
             move(direction);
         }
     }
@@ -71,17 +70,15 @@ public class Sokoban {
     public class Move {
         String direction;
         Position originalWorkerPos;
-        Position currentWorkerPos;
-        public Move(String directionInput, Position originalWorkerPosInput, Position currentWorkerPosInput){
+        public Move(String directionInput, Position originalWorkerPosInput){
             direction = directionInput;
             originalWorkerPos = originalWorkerPosInput;
-            currentWorkerPos = currentWorkerPosInput;
         }
     }
 
     //Called by movement functions to record the data
-    public void moveSave(String direction, Position originalWorkerPos, Position currentWorkerPos){
-        Move toPush = new Move(direction,originalWorkerPos,currentWorkerPos);
+    public void moveSave(String direction, Position originalWorkerPos){
+        Move toPush = new Move(direction,originalWorkerPos);
         moves.push(toPush);
     }
 
