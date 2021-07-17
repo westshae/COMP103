@@ -57,12 +57,14 @@ public class Sokoban {
         if ( cells[nextP.row][nextP.col].hasBox() &&
         cells[nextNextP.row][nextNextP.col].isFree() ) { 
             push(direction);
+            moveSave(workerDir, workerPos, "push", nextP);
+
 
             if (isSolved()) { reportWin(); }
         }
         // is the next cell free for the worker to move into?
         else if ( cells[nextP.row][nextP.col].isFree() ) {
-            moveSave(workerDir, workerPos);
+            moveSave(workerDir, workerPos, "move", null);
             move(direction);
         }
     }
@@ -70,15 +72,22 @@ public class Sokoban {
     public class Move {
         String direction;
         Position originalWorkerPos;
-        public Move(String directionInput, Position originalWorkerPosInput){
+        String moveType;
+        Position originalBoxPos;
+
+        public Move(String directionInput, Position originalWorkerPosInput, String moveTypeInput, Position originalBoxPosInput){
             direction = directionInput;
             originalWorkerPos = originalWorkerPosInput;
+            moveType=moveTypeInput;
+            if(moveTypeInput.equals("push")){
+                originalBoxPos = originalBoxPosInput;
+            }
         }
     }
 
     //Called by movement functions to record the data
-    public void moveSave(String direction, Position originalWorkerPos){
-        Move toPush = new Move(direction,originalWorkerPos);
+    public void moveSave(String direction, Position originalWorkerPos, String moveType, Position originalBoxPos){
+        Move toPush = new Move(direction,originalWorkerPos, moveType, originalBoxPos);
         moves.push(toPush);
     }
 
@@ -120,15 +129,34 @@ public class Sokoban {
      *  move the Worker in the direction,
      *  pull the box into the Worker's old position
      */
-    public void pull(String direction) {
-        /*# YOUR CODE HERE */
+    public void pull(String direction, Position originalBoxPos) {
+        Position boxPos = workerPos.next(direction);   // where box is
+        Position newBoxPos = boxPos.next(opposite(direction));   // where box will go
+
+        Position toRemove = newBoxPos.next(opposite(direction));
+
+        cells[toRemove.row][toRemove.col].removeBox();     // remove box from current cell
+        cells[newBoxPos.row][newBoxPos.col].addBox();  // place box in its new position
+
+        drawCell(workerPos);                           // redisplay cell under worker
+        drawCell(toRemove);                              // redisplay cell without the box
+        drawCell(newBoxPos);                           // redisplay cell with the box
+
+        workerPos = boxPos;                            // put worker in new position
+        drawWorker();                                  // display worker at new position
+
+        Trace.println("Pull " + direction);   // for debugging
 
     }
 
     public void undo(){
         if(moves.empty()){return;}
         Move recentMove = (Move) moves.pop();
-        move(opposite(recentMove.direction));
+        if(recentMove.moveType.equals("move")){
+            move(opposite(recentMove.direction));
+        }else if(recentMove.moveType.equals("push")){
+            pull(opposite(recentMove.direction), recentMove.originalBoxPos);
+        }
     }
 
     /**
