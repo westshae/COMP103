@@ -16,7 +16,9 @@ public class Pencil{
     private double lastX;
     private double lastY;
 
-    private Stack<ArrayList<Line>> strokes = new Stack();
+    private Stack<ArrayList<Line>> undo = new Stack();
+    private Stack<ArrayList<Line>> redo = new Stack();
+
     private ArrayList<Line> stroke = new ArrayList<>();
 
 
@@ -26,17 +28,35 @@ public class Pencil{
     public void setupGUI(){
         UI.setMouseMotionListener(this::doMouse);
         UI.addButton("Quit", UI::quit);
-        UI.addButton("Undo", this::undo);
+        UI.addButton("Undo", this::handleUndo);
+        UI.addButton("Redo", this::handleRedo);
         UI.setLineWidth(3);
         UI.setDivider(0.0);
     }
 
     //Undoes a drawing
-    public void undo(){
+    public void handleUndo(){
         UI.clearGraphics();
-        strokes.pop();
-        for(int i = 0; i < strokes.size(); i++){
-            ArrayList<Line> stroke = strokes.get(i);
+        ArrayList<Line> removedStroke = undo.pop();
+        redo.push(removedStroke);
+        for(int i = 0; i < undo.size(); i++){
+            ArrayList<Line> stroke = undo.get(i);
+            for(int j = 0; j < stroke.size(); j++){
+                Line line = stroke.get(j);
+                UI.drawLine(line.x1,line.y1,line.x2,line.y2);
+            }
+        }
+    }
+
+    //Redoes a drawing
+    public void handleRedo(){
+        UI.clearGraphics();
+
+        ArrayList<Line> strokeToDo = redo.pop();
+        undo.push(strokeToDo);
+
+        for(int i = 0; i < undo.size(); i++){
+            ArrayList<Line> stroke = undo.get(i);
             for(int j = 0; j < stroke.size(); j++){
                 Line line = stroke.get(j);
                 UI.drawLine(line.x1,line.y1,line.x2,line.y2);
@@ -66,6 +86,7 @@ public class Pencil{
      */
     public void doMouse(String action, double x, double y) {
         if (action.equals("pressed")){
+            redo = new Stack<ArrayList<Line>>();
             stroke = new ArrayList<>();
             lastX = x;
             lastY = y;
@@ -83,8 +104,8 @@ public class Pencil{
         }
         else if (action.equals("released")){
             UI.drawLine(lastX, lastY, x, y);
-            strokes.push(stroke);
-            System.out.println(strokes);
+            undo.push(stroke);
+            System.out.println(undo);
         }
     }
 
