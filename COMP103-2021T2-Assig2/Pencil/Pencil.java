@@ -9,6 +9,9 @@
  */
 
 import ecs100.*;
+
+import javax.swing.*;
+import java.awt.*;
 import java.util.*;
 
 /** Pencil   */
@@ -20,6 +23,8 @@ public class Pencil{
     private Stack<ArrayList<Line>> redo = new Stack();
 
     private ArrayList<Line> stroke = new ArrayList<>();
+    private Color color = Color.BLACK;
+    private double width = 3;
 
 
     /**
@@ -30,8 +35,22 @@ public class Pencil{
         UI.addButton("Quit", UI::quit);
         UI.addButton("Undo", this::handleUndo);
         UI.addButton("Redo", this::handleRedo);
+        UI.addButton("Color", this::changeColour);
+        UI.addSlider("Width", 1, 10, width, this::changeWidth);
         UI.setLineWidth(3);
         UI.setDivider(0.0);
+    }
+
+    //Sets the colour
+    public void changeColour(){
+        color = JColorChooser.showDialog(UI.getFrame(), "Choose colour", null);
+        UI.setColor(color);
+    }
+
+    //Sets the width
+    public void changeWidth(double x){
+        width = x;
+        UI.setLineWidth(width);
     }
 
     //Undoes a drawing
@@ -43,6 +62,8 @@ public class Pencil{
             ArrayList<Line> stroke = undo.get(i);
             for(int j = 0; j < stroke.size(); j++){
                 Line line = stroke.get(j);
+                UI.setLineWidth(line.width);
+                UI.setColor(line.color);
                 UI.drawLine(line.x1,line.y1,line.x2,line.y2);
             }
         }
@@ -59,6 +80,8 @@ public class Pencil{
             ArrayList<Line> stroke = undo.get(i);
             for(int j = 0; j < stroke.size(); j++){
                 Line line = stroke.get(j);
+                UI.setLineWidth(line.width);
+                UI.setColor(line.color);
                 UI.drawLine(line.x1,line.y1,line.x2,line.y2);
             }
         }
@@ -73,11 +96,16 @@ public class Pencil{
         double x2;
         double y2;
 
-        public Line(double x1, double y1, double x2, double y2){
+        Color color;
+        double width;
+
+        public Line(double x1, double y1, double x2, double y2, Color color, double width){
             this.x1 = x1;
             this.y1 = y1;
             this.x2 = x2;
             this.y2 = y2;
+            this.color = color;
+            this.width = width;
         }
     }
 
@@ -94,7 +122,7 @@ public class Pencil{
         else if (action.equals("dragged")){
             UI.drawLine(lastX, lastY, x, y);
 
-            Line line = new Line(x,y,lastX,lastY);
+            Line line = new Line(x,y,lastX,lastY, color, width);
             stroke.add(line);
 
             lastX = x;
