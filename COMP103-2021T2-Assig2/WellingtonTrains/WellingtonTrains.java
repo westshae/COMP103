@@ -68,7 +68,7 @@ public class WellingtonTrains{
      */
     public void setupGUI(){
         UI.addButton("All Stations",        this::listAllStations);
-//        UI.addButton("Stations by name",    this::listStationsByName);
+        UI.addButton("Stations by name",    this::listStationsByName);
 //        UI.addButton("All Lines",           this::listAllTrainLines);
         UI.addTextField("Station",          (String name) -> {this.stationName=name;});
         UI.addTextField("Train Line",       (String name) -> {this.lineName=name;});
@@ -156,9 +156,16 @@ public class WellingtonTrains{
     //Queries
 
     public void listAllStations(){
-        System.out.println(allStations);
         for(int i = 0; i < allStations.size(); i++){
             UI.println(allStations.get(i));
+        }
+    }
+
+    public void listStationsByName(){
+        ArrayList<Station> newStations = new ArrayList<>(allStations);
+        Collections.sort(newStations);
+        for(int i = 0; i < newStations.size(); i++){
+            UI.println(newStations.get(i));
         }
     }
 
