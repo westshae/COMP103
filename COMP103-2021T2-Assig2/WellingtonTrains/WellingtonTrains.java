@@ -51,6 +51,8 @@ public class WellingtonTrains{
      * Load data files
      */
     public void loadData(){
+        getStationData();
+
         loadStationData();
         UI.println("Loaded Stations");
 //        loadTrainLineData();
@@ -65,9 +67,7 @@ public class WellingtonTrains{
      * You will need to implement the methods here.
      */
     public void setupGUI(){
-        loadStationData();
-        System.out.println(stationData);
-//        UI.addButton("All Stations",        this::listAllStations);
+        UI.addButton("All Stations",        this::listAllStations);
 //        UI.addButton("Stations by name",    this::listStationsByName);
 //        UI.addButton("All Lines",           this::listAllTrainLines);
         UI.addTextField("Station",          (String name) -> {this.stationName=name;});
@@ -110,10 +110,11 @@ public class WellingtonTrains{
     // Methods for loading data and answering queries
 
     //Loads the file using the arguments
-    public Scanner loadFile(String filename){
+    public Scanner loadFile(String message){
         Scanner scanner = null;
         try {
-            File file = new File("data/" + filename);
+            String path = UIFileChooser.open(message);
+            File file = new File(path);
             scanner = new Scanner(file);
 
         } catch(IOException e){UI.println("File reading failed");}
@@ -121,8 +122,8 @@ public class WellingtonTrains{
         return scanner;
     }
 
-    public void loadStationData(){
-        Scanner sc = loadFile("stations.data");
+    public void getStationData(){
+        Scanner sc = loadFile("Select the stations.data file");
         while(sc.hasNext()){
             String line = sc.nextLine();
             String[] splitLine = line.split(" ");
@@ -135,24 +136,30 @@ public class WellingtonTrains{
         }
     }
 
-//    public void loadStationData(){
-//        String filename = UI.askString("What is the filename?: ");
-//        Scanner sc = loadFile(filename);
-//
-//        public ArrayList<String> stationData(){
-//
-//        }
-//
-//        while(sc.hasNext()){
-//            String name = sc.nextLine();
-//
-//            while(stationData.hasNext())
-//
-//            int zone =
-////            Station station = new Station(line, )
-//            allStations.add()
-//        }
-//
-//    }
+
+    public void loadStationData(){
+        Scanner sc = loadFile("Select a stations.data file");
+
+        while(sc.hasNext()){
+            String name = sc.nextLine();
+
+            ArrayList<Integer> data = stationData.get(name);
+
+            int zone = data.get(0);
+            int x = data.get(1);
+            int y = data.get(2);
+            Station station = new Station(name, zone, x ,y);
+            allStations.add(station);
+        }
+    }
+
+    //Queries
+
+    public void listAllStations(){
+        System.out.println(allStations);
+        for(int i = 0; i < allStations.size(); i++){
+            UI.println(allStations.get(i));
+        }
+    }
 
 }
