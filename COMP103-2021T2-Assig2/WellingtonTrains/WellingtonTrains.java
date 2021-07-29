@@ -51,11 +51,9 @@ public class WellingtonTrains{
      * Load data files
      */
     public void loadData(){
-        getStationData();
-
         loadStationData();
         UI.println("Loaded Stations");
-//        loadTrainLineData();
+        loadTrainLineData();
         UI.println("Loaded Train Lines");
         // The following is only needed for the Completion and Challenge
 //        loadTrainServicesData();
@@ -69,7 +67,7 @@ public class WellingtonTrains{
     public void setupGUI(){
         UI.addButton("All Stations",        this::listAllStations);
         UI.addButton("Stations by name",    this::listStationsByName);
-//        UI.addButton("All Lines",           this::listAllTrainLines);
+        UI.addButton("All Lines",           this::listAllTrainLines);
         UI.addTextField("Station",          (String name) -> {this.stationName=name;});
         UI.addTextField("Train Line",       (String name) -> {this.lineName=name;});
         UI.addTextField("Destination",      (String name) -> {this.destinationName=name;});
@@ -110,10 +108,15 @@ public class WellingtonTrains{
     // Methods for loading data and answering queries
 
     //Loads the file using the arguments
-    public Scanner loadFile(String message){
+    public Scanner loadFile(boolean isMessage, String message){
         Scanner scanner = null;
         try {
-            String path = UIFileChooser.open(message);
+            String path;
+            if(isMessage){
+                 path = UIFileChooser.open(message);
+            }else{
+                path = message;
+            }
             File file = new File(path);
             scanner = new Scanner(file);
 
@@ -122,11 +125,15 @@ public class WellingtonTrains{
         return scanner;
     }
 
-    public void getStationData(){
-        Scanner sc = loadFile("Select the stations.data file");
-        while(sc.hasNext()){
-            String line = sc.nextLine();
+    public void loadStationData(){
+        //Iterates and saves all of the data from the stations.data file
+        Scanner stationsScanner = loadFile(false,"data/stations.data");
+        while(stationsScanner.hasNext()){
+            //Gets the line and splits it via spaces
+            String line = stationsScanner.nextLine();
             String[] splitLine = line.split(" ");
+
+            //Saves the data to an array and pushes into a hashmap, with the station name as the key.
             ArrayList<Integer> toSave = new ArrayList<>();
             toSave.add(Integer.parseInt(splitLine[1]));
             toSave.add(Integer.parseInt(splitLine[2]));
@@ -134,14 +141,11 @@ public class WellingtonTrains{
 
             stationData.put(splitLine[0], toSave);
         }
-    }
 
-
-    public void loadStationData(){
-        Scanner sc = loadFile("Select a stations.data file");
-
-        while(sc.hasNext()){
-            String name = sc.nextLine();
+        //Iterates and saves all of the stations inside the selected file, getting zones and coords from a hashmap of stations.data
+        Scanner locationScanner = loadFile(true, "Select a location-stations.data file");
+        while(locationScanner.hasNext()){
+            String name = locationScanner.nextLine();
 
             ArrayList<Integer> data = stationData.get(name);
 
@@ -153,9 +157,42 @@ public class WellingtonTrains{
         }
     }
 
+    public void loadTrainLineData(){
+        //Iterates through the train-lines.data file.
+        Scanner sc = loadFile(false,"data/train-lines.data");
+        while(sc.hasNext()){
+            //Splits the lines into the start and stop of the train line.
+            String line = sc.nextLine();
+            String[] splitLine = line.split("_");
+            ArrayList<String> stations = new ArrayList<>();
+            stations.add(splitLine[0]);
+            stations.add(splitLine[1]);
+
+
+
+            //For the two stations, adds them to the trainline
+            for(int i = 0; i < stations.size(); i++){
+                //Creates the station via the name of the station.
+                String current = stations.get(i);
+                ArrayList<Integer> stationInformation = stationData.get(current);
+                Station station = new Station(current, stationInformation.get(0), stationInformation.get(1), stationInformation.get(2));
+
+                //Creates the train line and adds it to the list of all train lines.
+                TrainLine trainLine = new TrainLine(line);
+                trainLine.addStation(station);
+                allLines.add(trainLine);
+            }
+        }
+    }
+
+
+
+
+
     //Queries
 
     public void listAllStations(){
+        UI.println("");
         for(int i = 0; i < allStations.size(); i++){
             UI.println(allStations.get(i));
         }
@@ -164,9 +201,17 @@ public class WellingtonTrains{
     public void listStationsByName(){
         ArrayList<Station> newStations = new ArrayList<>(allStations);
         Collections.sort(newStations);
+        UI.println("");
+
         for(int i = 0; i < newStations.size(); i++){
             UI.println(newStations.get(i));
         }
     }
 
+    public void listAllTrainLines(){
+        UI.println("");
+        for(int i = 0; i < allLines.size(); i++){
+            UI.println(allLines.get(i));
+        }
+    }
 }
