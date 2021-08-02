@@ -108,58 +108,69 @@ public class WellingtonTrains{
     // Methods for loading data and answering queries
 
     public void loadStationData(){
-        try {
-            allStations = new HashMap<>();
-            Scanner scanner = new Scanner(new File("data/stations.data"));
-            while (scanner.hasNext()) {
-                String name = scanner.next();
-                int zone = scanner.nextInt();
-                int x = scanner.nextInt();
-                int y = scanner.nextInt();
-                allStations.put(name, new Station(name, zone, x, y));
-            }
-        }catch (Exception e){e.fillInStackTrace();}
+        allStations = new HashMap<>();
+        Scanner scanner = null;
+        try{ scanner = new Scanner(new File("data/stations.data"));}
+        catch (FileNotFoundException e){e.fillInStackTrace();}
+
+        while (scanner.hasNext()) {
+            String name = scanner.next();
+            allStations.put(name, new Station(name, scanner.nextInt(), scanner.nextInt(), scanner.nextInt()));
+        }
     }
 
     public void loadTrainLineData(){
         allLines = new HashMap<>();
-        try{
-            Scanner scanner = new Scanner(new File("data/train-lines.data"));
-            while(scanner.hasNext()){
-                String name = scanner.next();
-                Scanner scanner2 = new Scanner(new File("data/" + name + "-stations.data"));
-                TrainLine line = new TrainLine(name);
-                while(scanner2.hasNext()){
-                    String station = scanner2.next();
-                    Station stationObj = allStations.get(station);
-                    line.addStation(stationObj);
-                    stationObj.addTrainLine(line);
-                    allStations.put(station, stationObj);
-                }
-                allLines.put(name, line);
+        Scanner dataScanner = null;
+
+        try{dataScanner = new Scanner(new File("data/train-line.data"));}
+        catch (FileNotFoundException e){e.fillInStackTrace();}
+
+
+        while(dataScanner.hasNext()){
+            String lineName = dataScanner.next();
+            TrainLine line = new TrainLine(lineName);
+            Scanner stationScanner = null;
+
+            try{ stationScanner = new Scanner(new File("data/" + lineName + "-stations.data"));}
+            catch (FileNotFoundException e){e.fillInStackTrace();}
+
+            while(stationScanner.hasNext()){
+                String stationName = stationScanner.next();
+                Station station = allStations.get(stationName);
+
+                line.addStation(station);
+                station.addTrainLine(line);
+
+                allStations.put(stationName, station);
             }
-        }catch (Exception e){e.fillInStackTrace();}
+            allLines.put(lineName, line);
+        }
     }
 
     public void loadTrainServicesData(){
-        try{
-            Scanner scanner = new Scanner(new File("data/train-lines.data"));
-            while(scanner.hasNext()){
-                String lineName = scanner.next();
-                TrainLine line = allLines.get(lineName);
-                List<String> servicesList = Files.readAllLines(Path.of("data/"+lineName+"-services.data"));
-                for(int i = 0; i < servicesList.size(); i++){
-                    Scanner scanner2 = new Scanner(servicesList.get(i));
-                    TrainService trainService = new TrainService(line);
-                    while(scanner2.hasNext()){
-                        trainService.addTime(scanner2.nextInt());
-                    }
-                    line.addTrainService(trainService);
-//                    allServices.put()
-                }
-                allLines.put(lineName, line);
+        Scanner dataScanner = null;
+        try{ dataScanner = new Scanner(new File("data/train-lines.data"));}
+        catch(FileNotFoundException e){e.fillInStackTrace();}
+
+        while(dataScanner.hasNext()) {
+            String name = dataScanner.next();
+            TrainLine line = allLines.get(name);
+            List<String> servicesList = null;
+
+            try { servicesList = Files.readAllLines(Path.of("data/" + name + "-services.data")); }
+            catch (IOException e) { e.fillInStackTrace(); }
+
+            for (int i = 0; i < servicesList.size(); i++) {
+                Scanner servicesScanner = new Scanner(servicesList.get(i));
+                TrainService trainService = new TrainService(line);
+
+                while (servicesScanner.hasNext()) { trainService.addTime(servicesScanner.nextInt()); }
+
+                line.addTrainService(trainService);
             }
-        }catch (Exception e){e.fillInStackTrace();}
+            allLines.put(lineName, line);
+        }
     }
 
 
