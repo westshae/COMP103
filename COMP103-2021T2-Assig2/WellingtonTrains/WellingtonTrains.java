@@ -73,7 +73,7 @@ public class WellingtonTrains{
         UI.addTextField("Destination",      (String name) -> {this.destinationName=name;});
         UI.addTextField("Time (24hr)",      (String time) ->
             {try{this.startTime=Integer.parseInt(time);}catch(Exception e){UI.println("Enter four digits");}});
-//        UI.addButton("Lines of Station",    () -> {listLinesOfStation(this.stationName);});
+        UI.addButton("Lines of Station",    () -> {listLinesOfStation(this.stationName);});
 //        UI.addButton("Stations on Line",    () -> {listStationsOnLine(this.lineName);});
 //        UI.addButton("Stations connected?", () -> {checkConnected(this.stationName, this.destinationName);});
 //        UI.addButton("Next Services",       () -> {findNextServices(this.stationName, this.startTime);});
@@ -131,7 +131,7 @@ public class WellingtonTrains{
         Scanner dataScanner = null;
 
         //Tries to load a file then scanner for the train-line.data file
-        try{dataScanner = new Scanner(new File("data/train-line.data"));}
+        try{dataScanner = new Scanner(new File("data/train-lines.data"));}
         catch (FileNotFoundException e){e.fillInStackTrace();}
 
         //Iterates through the train-line.data file, which is a list of the lines
@@ -206,16 +206,19 @@ public class WellingtonTrains{
 
     public void listAllStations(){
         UI.println("");
+        //Iterates through the hashmap and prints the values
         allStations.forEach((key, value) ->{
-            UI.println(key + ": " + value);
+            UI.println(value);
         });
     }
 
     public void listStationsByName(){
+        //Saves the allStations hashmap to a list of keys, then sorts those keys by alphabetical order
         List<String> newStations = new ArrayList(allStations.keySet());
         Collections.sort(newStations);
         UI.println("");
 
+        //Iterates through the sorted list and uses the sorted keys to get the values
         for(int i = 0; i < newStations.size(); i++){
             UI.println(allStations.get(newStations.get(i)));
         }
@@ -223,13 +226,25 @@ public class WellingtonTrains{
 
     public void listAllTrainLines(){
         UI.println("");
+        //Iterates through the hashmap and prints all the values
         allLines.forEach((key, value)->{
-            UI.println(key + "::" + value);
+            UI.println(value);
         });
     }
 
     public void listLinesOfStation(String stationName){
         UI.println("");
-        UI.println(stationName);
+        //Initializes the stations
+        Station station = null;
+
+        //Attempts to get the station from the hashmap, if not returns an error message and returns
+        try{ station = allStations.get(stationName);}
+        catch (NullPointerException e){UI.println("Station not found"); return;}
+
+        //Gets the set of trainLines from the station, then iterates through it and prints the line
+        Set<TrainLine> trainLines = station.getTrainLines();
+        trainLines.forEach((lines)->{
+            UI.println(lines);
+        });
     }
 }
