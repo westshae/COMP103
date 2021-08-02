@@ -107,68 +107,93 @@ public class WellingtonTrains{
 
     // Methods for loading data and answering queries
 
+    //Loads the station data
     public void loadStationData(){
+        //Resets the currents station hashmap and initializes scanner to null
         allStations = new HashMap<>();
         Scanner scanner = null;
+
+        //Tries to load a file then scanner for the stations.data file
         try{ scanner = new Scanner(new File("data/stations.data"));}
         catch (FileNotFoundException e){e.fillInStackTrace();}
 
+        //Iterates through the file, saving the name as it is used more than once and saves it to a station.
         while (scanner.hasNext()) {
             String name = scanner.next();
             allStations.put(name, new Station(name, scanner.nextInt(), scanner.nextInt(), scanner.nextInt()));
         }
     }
 
+    //Saves the line data
     public void loadTrainLineData(){
+        //Resets the current lines hashmap and initializes scanner to null
         allLines = new HashMap<>();
         Scanner dataScanner = null;
 
+        //Tries to load a file then scanner for the train-line.data file
         try{dataScanner = new Scanner(new File("data/train-line.data"));}
         catch (FileNotFoundException e){e.fillInStackTrace();}
 
-
+        //Iterates through the train-line.data file, which is a list of the lines
         while(dataScanner.hasNext()){
+            //Saves the linename, creates a line using that name, then initializes the scanner to null
             String lineName = dataScanner.next();
             TrainLine line = new TrainLine(lineName);
             Scanner stationScanner = null;
 
+            //Tries to load a file then scanner for the current line.
             try{ stationScanner = new Scanner(new File("data/" + lineName + "-stations.data"));}
             catch (FileNotFoundException e){e.fillInStackTrace();}
 
+            //Iterates through the current line stations file.
             while(stationScanner.hasNext()){
+                //Saves the station name and uses it to get the station from all stations
                 String stationName = stationScanner.next();
                 Station station = allStations.get(stationName);
 
+                //Adds the station to the line created in the previous scope and adds the station to the line, then saves to the the allStations hashmap
                 line.addStation(station);
                 station.addTrainLine(line);
 
                 allStations.put(stationName, station);
             }
+            //Saves the line to the allLines hashmap
             allLines.put(lineName, line);
         }
     }
 
     public void loadTrainServicesData(){
+        //Initializes the scanner to null;
         Scanner dataScanner = null;
+
+        //Attempts to the load the train-lines.data file
         try{ dataScanner = new Scanner(new File("data/train-lines.data"));}
         catch(FileNotFoundException e){e.fillInStackTrace();}
 
+        //Iterates through the train-lines.data file
         while(dataScanner.hasNext()) {
+            //Saves the name of the line, uses the name to get the line from allLines, then initializes a list for the services.
             String name = dataScanner.next();
             TrainLine line = allLines.get(name);
             List<String> servicesList = null;
+            Scanner scanner = null;
 
-            try { servicesList = Files.readAllLines(Path.of("data/" + name + "-services.data")); }
-            catch (IOException e) { e.fillInStackTrace(); }
+            //Attempts to load a scanner from the line-services file
+            try{ scanner = new Scanner(new File("data/" + name + "-services.data"));}
+            catch (FileNotFoundException e){e.fillInStackTrace();}
 
-            for (int i = 0; i < servicesList.size(); i++) {
-                Scanner servicesScanner = new Scanner(servicesList.get(i));
+            //Iterates through the lines of the line-services file
+            while(scanner.hasNext()){
+                //Splits the line into a list of strings, then creates a trainService object using the line in the previous scope
+                String[] currentLine = scanner.nextLine().split(" ");
                 TrainService trainService = new TrainService(line);
 
-                while (servicesScanner.hasNext()) { trainService.addTime(servicesScanner.nextInt()); }
+                //Loops through the list, adding the times to the services, then adds the service to the line
+                for(int i = 0; i < currentLine.length; i++){ trainService.addTime(Integer.parseInt(currentLine[i])); }
 
                 line.addTrainService(trainService);
             }
+            //Saves the line to the hashmap
             allLines.put(lineName, line);
         }
     }
