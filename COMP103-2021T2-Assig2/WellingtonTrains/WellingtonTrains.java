@@ -75,7 +75,7 @@ public class WellingtonTrains{
             {try{this.startTime=Integer.parseInt(time);}catch(Exception e){UI.println("Enter four digits");}});
         UI.addButton("Lines of Station",    () -> {listLinesOfStation(this.stationName);});
         UI.addButton("Stations on Line",    () -> {listStationsOnLine(this.lineName);});
-//        UI.addButton("Stations connected?", () -> {checkConnected(this.stationName, this.destinationName);});
+        UI.addButton("Stations connected?", () -> {checkConnected(this.stationName, this.destinationName);});
 //        UI.addButton("Next Services",       () -> {findNextServices(this.stationName, this.startTime);});
 //        UI.addButton("Find Trip",           () -> {findTrip(this.stationName, this.destinationName, this.startTime);});
 
@@ -264,5 +264,39 @@ public class WellingtonTrains{
         });
     }
 
+    public void checkConnected(String stationName, String destinationName){
+        UI.println("");
 
+        //Initializes of objects
+        Station origin;
+        Station destination;
+
+        //Attempts to get both stations from the hashmap, if not returns an error
+
+        try{origin = allStations.get(stationName);}
+        catch (NullPointerException e){UI.println("Origin station not found");return;}
+
+        try{destination = allStations.get(destinationName);}
+        catch (NullPointerException e){UI.println("Destination station not found");return;}
+
+        boolean toLoop = true;
+        for(TrainLine trainLine: origin.getTrainLines()){//Loops through the origin's trainLines
+            if(!toLoop){break;}
+            for(Station station: trainLine.getStations()){//Loops through the trainline's stations
+                if(!toLoop){break;}
+                if(station.getName() == destination.getName()){
+                    for(TrainLine line: station.getTrainLines()){// goes through all the lines through that station
+                        if(!toLoop){break;}
+                        //Checks if the ends with the destination, then prints the final line, else it states there is no connection
+                        if(line.getName().split("_")[1].equals(destinationName)){
+                            UI.println(line.getName());
+                            toLoop = false;
+                        }else{
+                            UI.println("There is no connection between these two.");
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
