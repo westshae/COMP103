@@ -74,7 +74,7 @@ public class WellingtonTrains{
         UI.addTextField("Time (24hr)",      (String time) ->
             {try{this.startTime=Integer.parseInt(time);}catch(Exception e){UI.println("Enter four digits");}});
         UI.addButton("Lines of Station",    () -> {listLinesOfStation(this.stationName);});
-//        UI.addButton("Stations on Line",    () -> {listStationsOnLine(this.lineName);});
+        UI.addButton("Stations on Line",    () -> {listStationsOnLine(this.lineName);});
 //        UI.addButton("Stations connected?", () -> {checkConnected(this.stationName, this.destinationName);});
 //        UI.addButton("Next Services",       () -> {findNextServices(this.stationName, this.startTime);});
 //        UI.addButton("Find Trip",           () -> {findTrip(this.stationName, this.destinationName, this.startTime);});
@@ -235,7 +235,7 @@ public class WellingtonTrains{
     public void listLinesOfStation(String stationName){
         UI.println("");
         //Initializes the stations
-        Station station = null;
+        Station station;
 
         //Attempts to get the station from the hashmap, if not returns an error message and returns
         try{ station = allStations.get(stationName);}
@@ -243,8 +243,26 @@ public class WellingtonTrains{
 
         //Gets the set of trainLines from the station, then iterates through it and prints the line
         Set<TrainLine> trainLines = station.getTrainLines();
-        trainLines.forEach((lines)->{
-            UI.println(lines);
+        trainLines.forEach((line)->{
+            UI.println(line);
         });
     }
+
+    public void listStationsOnLine(String lineName){
+        UI.println("");
+        //Initializes line
+        TrainLine line = null;
+
+        //Attempts to get the line from the hashmap, if not returns an error message and returns;
+        try{line = allLines.get(lineName);}
+        catch (NullPointerException e){e.fillInStackTrace();}
+
+        //Saves the stations of the line ot a list, then iterates through the list printing the location
+        List<Station> trainStations = line.getStations();
+        trainStations.forEach((station)->{
+            UI.println(station);
+        });
+    }
+
+
 }
