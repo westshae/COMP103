@@ -100,8 +100,30 @@ public class WellingtonTrains{
 
     public void doMouse(String action, double x, double y){
         if (action.equals("released")){
-            /*# YOUR CODE HERE */
+            UI.println("");
+            HashMap<Double, String> allStationsWithDist = new HashMap<>();
+            ArrayList<Double> distances = new ArrayList<>();
 
+
+            for(String string : allStations.keySet()){
+                double xCoord = allStations.get(string).getXCoord();
+                double yCoord = allStations.get(string).getYCoord();
+
+                double horDist = Math.abs(xCoord - x);
+                double verDist = Math.abs(yCoord - y);
+
+                double distance = Math.sqrt((horDist *2) + (verDist * 2));
+                allStationsWithDist.put(distance, string);
+                distances.add(distance);
+            }
+
+
+
+            Collections.sort(distances);
+
+            for(int i = 0; i < distances.size() && i < 10; i++){
+                UI.println(allStationsWithDist.get(distances.get(i)) + ": " + distances.get(i).toString() + " units from mouse");
+            }
         }
     }
 
