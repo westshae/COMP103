@@ -3,9 +3,9 @@
 // You may not distribute it in any other way without permission.
 
 /* Code for COMP103 - 2021T2, Assignment 2
- * Name:
- * Username:
- * ID:
+ * Name:Shae West
+ * Username: westshae
+ * ID:300556911
  */
 
 import ecs100.*;
