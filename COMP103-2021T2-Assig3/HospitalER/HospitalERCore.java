@@ -38,7 +38,8 @@ public class HospitalERCore{
     private Set<Patient> treatmentRoom = new HashSet<Patient>();
 
     // fields for the statistics
-    /*# YOUR CODE HERE */
+    private int treated = 0;
+    private ArrayList<Integer> waitTimes = new ArrayList<>();
 
     // Fields for the simulation
     private boolean running = false;
@@ -94,6 +95,10 @@ public class HospitalERCore{
 
         // reset the waiting room, the treatment room, and the statistics.
         /*# YOUR CODE HERE */
+        waitingRoom = new ArrayDeque<>();
+        treatmentRoom = new HashSet<>();
+        treated = 0;
+        waitTimes = new ArrayList<Integer>();
 
         UI.clearGraphics();
         UI.clearText();
@@ -105,6 +110,7 @@ public class HospitalERCore{
     public void run(){
         if (running) { return; } // don't start simulation if already running one!
         running = true;
+        HashSet<Patient> toRemove = new HashSet<>();
         while (running){         // each time step, check whether the simulation should pause.
 
             // Hint: if you are stepping through a set, you can't remove
@@ -114,6 +120,37 @@ public class HospitalERCore{
             //   the items on the temporary list from the set.
 
             /*# YOUR CODE HERE */
+            time++;
+            for(Patient patient : treatmentRoom){
+                if(patient.completedCurrentTreatment()){
+                    toRemove.add(patient);
+                }
+                else {
+                    patient.advanceTreatmentByTick();
+                }
+            }
+
+            for(Patient patient: toRemove){
+                treated++;
+                waitTimes.add(patient.getWaitingTime());
+
+                UI.println(time+ ": Discharge: " + patient);
+                treatmentRoom.remove(patient);
+
+            }
+            toRemove = new HashSet<>();
+
+            for(Patient patient : waitingRoom){
+                patient.waitForATick();
+            }
+
+            if(treatmentRoom.size() < 5){
+                for(Patient patient: waitingRoom){
+                    treatmentRoom.add(patient);
+                    waitingRoom.remove(patient);
+                    break;
+                }
+            }
 
             // Get any new patient that has arrived and add them to the waiting room
             if (time==1 || Math.random()<1.0/arrivalInterval){
@@ -136,8 +173,12 @@ public class HospitalERCore{
      * The run method should have been recording various statistics during the simulation.
      */
     public void reportStatistics(){
-        /*# YOUR CODE HERE */
-
+        UI.println("There have been " + treated + " treated patients.");
+        int total = 0;
+        for(Integer integer : waitTimes){
+            total += integer;
+        }
+        UI.println(total/treated);
     }
 
 

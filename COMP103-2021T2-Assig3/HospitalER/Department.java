@@ -33,19 +33,19 @@ public class Department{
      * You may need to change the names if your fields had different names
      */
     public void redraw(double y){
-        UI.setFontSize(14);
-        UI.drawString(name, 0, y-35);
-        double x = 10;
-        UI.drawRect(x-5, y-30, maxPatients*10, 30);  // box to show max number of patients
-        for(Patient p : treatmentRoom){
-            p.redraw(x, y);
-            x += 10;
-        }
-        x = 200;
-        for(Patient p : waitingRoom){
-            p.redraw(x, y);
-            x += 10;
-        }
+//        UI.setFontSize(14);
+//        UI.drawString(name, 0, y-35);
+//        double x = 10;
+//        UI.drawRect(x-5, y-30, maxPatients*10, 30);  // box to show max number of patients
+//        for(Patient p : treatmentRoom){
+//            p.redraw(x, y);
+//            x += 10;
+//        }
+//        x = 200;
+//        for(Patient p : waitingRoom){
+//            p.redraw(x, y);
+//            x += 10;
+//        }
     }
 
 }
