@@ -42,6 +42,7 @@ public class HospitalERCore{
     private ArrayList<Integer> waitTimes = new ArrayList<>();
 
     // Fields for the simulation
+    private boolean priority = false;
     private boolean running = false;
     private int time = 0; // The simulated time - the current "tick"
     private int delay = 300;  // milliseconds of real time for each tick
@@ -89,6 +90,7 @@ public class HospitalERCore{
      *  reset the statistics.
      */
     public void reset(boolean usePriorityQueue){
+
         running=false;
         UI.sleep(2*delay);  // to make sure that any running simulation has stopped
         time = 0;           // set the "tick" to zero.
@@ -100,6 +102,8 @@ public class HospitalERCore{
         treated = 0;
         waitTimes = new ArrayList<Integer>();
 
+        priority = usePriorityQueue;
+
         UI.clearGraphics();
         UI.clearText();
     }
@@ -110,7 +114,7 @@ public class HospitalERCore{
     public void run(){
         if (running) { return; } // don't start simulation if already running one!
         running = true;
-        HashSet<Patient> toRemove = new HashSet<>();
+        HashSet<Patient> toRemove = new HashSet<>(); // Set which contains patients which needs to be removed from the treatment room
         while (running){         // each time step, check whether the simulation should pause.
 
             // Hint: if you are stepping through a set, you can't remove
@@ -120,36 +124,62 @@ public class HospitalERCore{
             //   the items on the temporary list from the set.
 
             /*# YOUR CODE HERE */
-            time++;
-            for(Patient patient : treatmentRoom){
-                if(patient.completedCurrentTreatment()){
-                    toRemove.add(patient);
+            time++;//Increases tick by one
+
+            //Checks patient's treatment progress.
+            for(Patient patient : treatmentRoom){//Iterates through treatment room patients
+                if(patient.completedCurrentTreatment()){//If current patient has finished treatments
+                    toRemove.add(patient);//Adds the patient to a set to remove.
                 }
-                else {
-                    patient.advanceTreatmentByTick();
+                else {//If current patient hasn't finished treatments
+                    patient.advanceTreatmentByTick();//Add tick to treatment time for current patient
                 }
             }
 
-            for(Patient patient: toRemove){
-                treated++;
-                waitTimes.add(patient.getWaitingTime());
+            //Removes patients from treatment room
+            for(Patient patient: toRemove){//Iterates through toRemove patients
+                treated++;//Increases treated patients number stat
+                waitTimes.add(patient.getWaitingTime());//Adds the waittime of the treated patient to the set of waittimes
 
                 UI.println(time+ ": Discharge: " + patient);
                 treatmentRoom.remove(patient);
 
             }
-            toRemove = new HashSet<>();
+            toRemove = new HashSet<>();//Resets the toRemove hashset
 
-            for(Patient patient : waitingRoom){
+            for(Patient patient : waitingRoom){//For all patients in waitingRoom, increasing waiting time by a tick
                 patient.waitForATick();
             }
 
-            if(treatmentRoom.size() < 5){
-                for(Patient patient: waitingRoom){
-                    treatmentRoom.add(patient);
-                    waitingRoom.remove(patient);
-                    break;
+            //Moves patients to treatment room from waiting room
+            if(treatmentRoom.size() < 5){//If there is room inside the treatment room
+                if(!priority) {//If priority queue isn't being used
+                    Patient patient = waitingRoom.poll();//Gets the first patient in the queue
+                    treatmentRoom.add(patient);//Adds the patient to treatment room
+                    waitingRoom.remove(patient);//Removes patient from waiting room
                 }
+
+                else{//If priority queue is being used
+                    Patient current = null;//Patient that has higher priority
+                    for(Patient patient : waitingRoom){//Iterates through waiting room patients
+                        if(current == null){//If currentPatient doesn't exist, make first patient current highest priority
+                            current = patient;
+                        }else{//If currentPatient does exist, compares it to current iteration of patient
+                            if(current.compareTo(patient) == 1){//If currentPriority patient is less then current patient
+                                current = patient;//Change current highest priority patient to current iteration of patient
+                            }
+                        }
+                    }
+
+                    //After higher priority patient in waiting room has been found
+                    if(current != null){//Ensure current higher priority has been initiated
+                        //Adds patient from waiting room to treatment room
+                        treatmentRoom.add(current);
+                        waitingRoom.remove(current);
+                    }
+
+                }
+
             }
 
             // Get any new patient that has arrived and add them to the waiting room
@@ -175,10 +205,12 @@ public class HospitalERCore{
     public void reportStatistics(){
         UI.println("There have been " + treated + " treated patients.");
         int total = 0;
-        for(Integer integer : waitTimes){
+        for(Integer integer : waitTimes){//Adds each int in waitTimes set into total
             total += integer;
         }
-        UI.println(total/treated);
+        if(total != 0 && treated != 0) {//Only print average wait time if it doesn't equal 0.
+            UI.println(total / treated);
+        }
     }
 
 
