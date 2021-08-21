@@ -37,8 +37,8 @@ public class HospitalERCompl{
 
     // Fields for recording the patients waiting in the waiting room and being treated in the treatment room
     private static final int MAX_PATIENTS = 5;   // max number of patients currently being treated
-    private HashMap<String, Queue> waitingRoom = new HashMap<>();//Creates a hashmap to contain all different waiting rooms, accessed by name of department
-    private HashMap<String, Set> treatmentRoom = new HashMap<>();//Creates a hashmap to contain all different treatment rooms, accessed by name of department
+    private HashMap<String, Department> waitingRoom = new HashMap<>();//Creates a hashmap to contain all different waiting rooms, accessed by name of department
+    private HashMap<String, Department> treatmentRoom = new HashMap<>();//Creates a hashmap to contain all different treatment rooms, accessed by name of department
 
 
     // fields for the statistics
@@ -87,20 +87,6 @@ public class HospitalERCompl{
         UI.setDivider(0.5);
     }
 
-    //resets the hashmaps of all department hashmaps, hashsets and queues
-    private void resetRooms(){
-        //Reinitializes the hashmaps
-        waitingRoom = new HashMap<>();
-        treatmentRoom = new HashMap<>();
-
-        List<String> departments = Arrays.asList("ER", "Surgery", "xray", "ultrasound");//List of departments to iterate through
-        for(String department : departments){//Iterates through list above
-            //Adds a new queue/set with a map to the current department.
-            waitingRoom.put(department, new ArrayDeque<>());
-            treatmentRoom.put(department, new HashSet<>());
-        }
-    }
-
     /**
      * Reset the simulation:
      *  stop any running simulation,
@@ -115,12 +101,15 @@ public class HospitalERCompl{
 
         // reset the waiting room, the treatment room, and the statistics.
         /*# YOUR CODE HERE */
-        waitingRoom = new ArrayDeque<>();
-        treatmentRoom = new HashSet<>();
-        treated = 0;
-        waitTimes = new ArrayList<Integer>();
+        //Reinitializes the hashmaps
+        waitingRoom = new HashMap<>();
+        treatmentRoom = new HashMap<>();
 
-        priority = usePriorityQueue;
+
+        treated = 0;//Resets treated number
+        waitTimes = new ArrayList<Integer>(); // Reinitializes array of wait times
+
+        priority = usePriorityQueue; // Determines if the program should use priority queue systems
 
         UI.clearGraphics();
         UI.clearText();
