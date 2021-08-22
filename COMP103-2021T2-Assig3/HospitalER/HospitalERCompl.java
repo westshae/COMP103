@@ -125,70 +125,14 @@ public class HospitalERCompl{
         if (running) { return; } // don't start simulation if already running one!
         running = true;
         while (running){         // each time step, check whether the simulation should pause.
-
-            // Hint: if you are stepping through a set, you can't remove
-            //   items from the set inside the loop!
-            //   If you need to remove items, you can add the items to a
-            //   temporary list, and after the loop is done, remove all
-            //   the items on the temporary list from the set.
-
-            /*# YOUR CODE HERE */
             time++;//Increases tick by one
 
-            //iterates through each department's treatment room
-            //For each treatment room advances their treatment by a tick
-            for(var entry : departments.entrySet()){//Iterates through the treatmentRooms entries
-                Department department = entry.getValue();//Gets current department
-                for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
-                    if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
-                        //TODO: Add check for if there are more treatments required.
-                    }
-                    else{
-                        patient.advanceTreatmentByTick();
-                    }
-                }
-            }
+            patientTreatmentCheck();//Checks patient's treatments for if they are completed
+            patientTicks();//Iterates through all patients in waiting room and adds a tick
+            movePatientsFromWaitingToTreatment();//Moves patients from department waiting rooms to treatment rooms
+            patientArrival();// Get any new patient that has arrived and add them to the waiting room
 
-            //Iterates through all waiting room patients and waits for a tick.
-            for(var entry : departments.entrySet()){//Iterates through the waitingRooms entries
-                Department department = entry.getValue();//Gets current department
-                for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
-                    patient.waitForATick();
-                }
-            }
 
-            //Moves patients from department waiting rooms to treatment rooms
-            for(var entry : departments.entrySet()){
-                Department department = entry.getValue();
-                if(department.getTreatmentRoom().size() < department.getMaxPatients()){
-                    if(!priority){
-                        Patient patient = department.getFirstWaiting();
-                        department.moveToTreatment(patient);
-                    }
-                    else{
-                        Patient current = null;
-                        for(Patient patient : department.getWaitingRoom()){
-                            if(current == null){
-                                current = patient;
-                            }
-                            else if(current.compareTo(patient) == 1){
-                                current = patient;
-                            }
-                        }
-                        if(current != null){
-                            department.getTreatmentRoom().add(current);
-                            department.getWaitingRoom().remove(current);
-                        }
-                    }
-                }
-            }
-
-            // Get any new patient that has arrived and add them to the waiting room
-            if (time==1 || Math.random()<1.0/arrivalInterval){
-                Patient newPatient = new Patient(time, randomPriority());
-                UI.println(time+ ": Arrived: "+newPatient);
-                departments.get("ER").getWaitingRoom().offer(newPatient);//Adds all new patients to ER waiting room
-            }
             redraw();
             UI.sleep(delay);
         }
@@ -197,6 +141,70 @@ public class HospitalERCompl{
     }
 
     // Additional methods used by run() (You can define more of your own)
+
+    //Function which adds a patient to the ER waiting room if time is = 1 or based on arrivalInterval
+    public void patientArrival(){
+        if (time==1 || Math.random()<1.0/arrivalInterval){
+            Patient newPatient = new Patient(time, randomPriority());
+            UI.println(time+ ": Arrived: "+newPatient);
+            departments.get("ER").getWaitingRoom().offer(newPatient);//Adds all new patients to ER waiting room
+        }
+    }
+
+    //Moves patients from department waiting rooms to treatment rooms
+    public void movePatientsFromWaitingToTreatment(){
+        for(var entry : departments.entrySet()){
+            Department department = entry.getValue();
+            if(department.getTreatmentRoom().size() < department.getMaxPatients()){
+                if(!priority){
+                    Patient patient = department.getFirstWaiting();
+                    department.moveToTreatment(patient);
+                }
+                else{
+                    Patient current = null;
+                    for(Patient patient : department.getWaitingRoom()){
+                        if(current == null){
+                            current = patient;
+                        }
+                        else if(current.compareTo(patient) == 1){
+                            current = patient;
+                        }
+                    }
+                    if(current != null){
+                        department.getTreatmentRoom().add(current);
+                        department.getWaitingRoom().remove(current);
+                    }
+                }
+            }
+        }
+    }
+
+    //Checks all patients for if their treatment is completed
+    //If the treatment is completed, moves them to "cured" or to their next treatment
+    //Else advances treatment by a tick
+    public void patientTreatmentCheck(){
+        for(var entry : departments.entrySet()){//Iterates through the treatmentRooms entries
+            Department department = entry.getValue();//Gets current department
+            for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
+                if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
+                    //TODO: Add check for if there are more treatments required.
+                }
+                else{
+                    patient.advanceTreatmentByTick();
+                }
+            }
+        }
+    }
+
+
+    public void patientTicks(){
+        for(var entry : departments.entrySet()){//Iterates through the waitingRooms entries
+            Department department = entry.getValue();//Gets current department
+            for(Patient patient : department.getWaitingRoom()){//Iterates through each department's treatment room's patients
+                patient.waitForATick();
+            }
+        }
+    }
 
     /**
      * Report summary statistics about all the patients that have been discharged.
