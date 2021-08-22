@@ -25,7 +25,7 @@ public class Department{
 
     private String name;
     private int maxPatients;
-    private boolean queueType;
+    private boolean queueType; // False == normal queue, True == priority queue
     private Queue<Patient> waitingRoom;
     private HashSet<Patient> treatmentRoom;
 

@@ -114,7 +114,6 @@ public class HospitalERCore{
     public void run(){
         if (running) { return; } // don't start simulation if already running one!
         running = true;
-        HashSet<Patient> toRemove = new HashSet<>(); // Set which contains patients which needs to be removed from the treatment room
         while (running){         // each time step, check whether the simulation should pause.
 
             // Hint: if you are stepping through a set, you can't remove
@@ -127,6 +126,7 @@ public class HospitalERCore{
             time++;//Increases tick by one
 
             //Checks patient's treatment progress.
+            HashSet<Patient> toRemove = new HashSet<>(); // Set which contains patients which needs to be removed from the treatment room
             for(Patient patient : treatmentRoom){//Iterates through treatment room patients
                 if(patient.completedCurrentTreatment()){//If current patient has finished treatments
                     toRemove.add(patient);//Adds the patient to a set to remove.
@@ -145,7 +145,6 @@ public class HospitalERCore{
                 treatmentRoom.remove(patient);
 
             }
-            toRemove = new HashSet<>();//Resets the toRemove hashset
 
             for(Patient patient : waitingRoom){//For all patients in waitingRoom, increasing waiting time by a tick
                 patient.waitForATick();
