@@ -136,13 +136,11 @@ public class HospitalERCompl{
             time++;//Increases tick by one
 
             //iterates through each department's treatment room
-            //For each treatment room, either remove the user or advances their treatment by a tick
-            ArrayList<Patient> toRemove = new ArrayList<>();
+            //For each treatment room advances their treatment by a tick
             for(var entry : departments.entrySet()){//Iterates through the treatmentRooms entries
                 Department department = entry.getValue();//Gets current department
                 for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
                     if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
-                        toRemove.add(patient);
                         //TODO: Add check for if there are more treatments required.
                     }
                     else{
@@ -150,16 +148,6 @@ public class HospitalERCompl{
                     }
                 }
             }
-
-            //Removes patients from treatment room
-//            for(Patient patient: toRemove){//Iterates through toRemove patients
-//                treated++;//Increases treated patients number stat
-//                waitTimes.add(patient.getWaitingTime());//Adds the waittime of the treated patient to the set of waittimes
-//
-//                UI.println(time+ ": Discharge: " + patient);
-//                treatmentRoom.remove(patient);
-//
-//            }
 
             //Iterates through all waiting room patients and waits for a tick.
             for(var entry : departments.entrySet()){//Iterates through the waitingRooms entries
@@ -169,42 +157,37 @@ public class HospitalERCompl{
                 }
             }
 
-//            //Moves patients to treatment room from waiting room
-//            if(treatmentRoom.size() < 5){//If there is room inside the treatment room
-//                if(!priority) {//If priority queue isn't being used
-//                    Patient patient = waitingRoom.poll();//Gets the first patient in the queue
-//                    treatmentRoom.add(patient);//Adds the patient to treatment room
-//                    waitingRoom.remove(patient);//Removes patient from waiting room
-//                }
-//
-//                else{//If priority queue is being used
-//                    Patient current = null;//Patient that has higher priority
-//                    for(Patient patient : waitingRoom){//Iterates through waiting room patients
-//                        if(current == null){//If currentPatient doesn't exist, make first patient current highest priority
-//                            current = patient;
-//                        }else{//If currentPatient does exist, compares it to current iteration of patient
-//                            if(current.compareTo(patient) == 1){//If currentPriority patient is less then current patient
-//                                current = patient;//Change current highest priority patient to current iteration of patient
-//                            }
-//                        }
-//                    }
-//
-//                    //After higher priority patient in waiting room has been found
-//                    if(current != null){//Ensure current higher priority has been initiated
-//                        //Adds patient from waiting room to treatment room
-//                        treatmentRoom.add(current);
-//                        waitingRoom.remove(current);
-//                    }
-//
-//                }
-//
-//            }
+            //Moves patients from department waiting rooms to treatment rooms
+            for(var entry : departments.entrySet()){
+                Department department = entry.getValue();
+                if(department.getTreatmentRoom().size() < department.getMaxPatients()){
+                    if(!priority){
+                        Patient patient = department.getFirstWaiting();
+                        department.moveToTreatment(patient);
+                    }
+                    else{
+                        Patient current = null;
+                        for(Patient patient : department.getWaitingRoom()){
+                            if(current == null){
+                                current = patient;
+                            }
+                            else if(current.compareTo(patient) == 1){
+                                current = patient;
+                            }
+                        }
+                        if(current != null){
+                            department.getTreatmentRoom().add(current);
+                            department.getWaitingRoom().remove(current);
+                        }
+                    }
+                }
+            }
 
             // Get any new patient that has arrived and add them to the waiting room
             if (time==1 || Math.random()<1.0/arrivalInterval){
                 Patient newPatient = new Patient(time, randomPriority());
                 UI.println(time+ ": Arrived: "+newPatient);
-                departments.get("ER").getWaitingRoom().offer(newPatient);
+                departments.get("ER").getWaitingRoom().offer(newPatient);//Adds all new patients to ER waiting room
             }
             redraw();
             UI.sleep(delay);
