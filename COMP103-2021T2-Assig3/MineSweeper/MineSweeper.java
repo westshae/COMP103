@@ -118,20 +118,32 @@ public class MineSweeper {
      *      (be careful not to go over the edges of the map)
      */
     public void exposeSquareAt(int row, int col){
-        if(row < 0 || row > 15 || col < 0 || col > 15){return;}
-        Square clicked = squares[row][col];
-        if(clicked.getAdjacentMines() == 0 && !clicked.isExposed()){
-            clicked.setExposed();
+        try {
+            if (row < 0 || row > 15 || col < 0 || col > 15) {
+                return;
+            }
+            UI.sleep(1);
+            System.out.println(row + ":" + col);
+            Square clicked = squares[row][col];
+            if (clicked.getAdjacentMines() == 0 && !clicked.isExposed()) {
+                clicked.setExposed();
+                clicked.draw(row, col);
+                if(row != 15 && col != 0)exposeSquareAt(row+1, col-1);
+                if(row != 15)exposeSquareAt(row+1, col);
+                if(row != 15 && col != 15)exposeSquareAt(row+1, col+1);
+                if(col != 0)exposeSquareAt(row, col-1);
+                if(col != 0)exposeSquareAt(row, col+1);
+                if(row != 0 && col != 0)exposeSquareAt(row-1, col-1);
+                if(row != 0)exposeSquareAt(row-1, col);
+                if(row != 0 && col != 15)exposeSquareAt(row-1, col+1);
 
-            exposeSquareAt(row + 1, col);
-            exposeSquareAt(row - 1, col);
-            exposeSquareAt(row, col + 1);
-            exposeSquareAt(row, col - 1);
 
-            clicked.draw(row, col);
-        }else{
-            return;
-        }
+            } else {
+                clicked.setExposed();
+                clicked.draw(row, col);
+                return;
+            }
+        }catch (ArrayIndexOutOfBoundsException e){ return;}
     }
 
     /** 
