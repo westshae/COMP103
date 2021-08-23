@@ -173,7 +173,7 @@ public class HospitalERCompl{
                         }
                     }
                     if(current != null){//Ensure the current patient has been initialized
-                        department.getWaitingRoom().remove(current);
+                        department.getWaitingRoom().remove(current);//Removes highest priority patient from waiting room
                         department.getTreatmentRoom().add(current);//Adds the highest priority patient to the treatment room
                     }
                 }

@@ -10,6 +10,9 @@
 
 import ecs100.*;
 import java.awt.Color;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
 import javax.swing.JButton;
 
 /**
@@ -93,11 +96,14 @@ public class MineSweeper {
      * (This method is not recursive)
      */
     public void tryExpose(int row, int col){
-        /*# YOUR CODE HERE */
+        Square clicked = squares[row][col];
+        if(clicked.isExposed()){return;}
+        if(clicked.hasMine()){ drawLose(); }
+        else { exposeSquareAt(row, col); }
 
-        if (hasWon()){
-            drawWin();
-        }
+//        if (hasWon()){
+//            drawWin();
+//        }
     }
 
     /** 
@@ -112,8 +118,20 @@ public class MineSweeper {
      *      (be careful not to go over the edges of the map)
      */
     public void exposeSquareAt(int row, int col){
-        /*# YOUR CODE HERE */
+        if(row < 0 || row > 15 || col < 0 || col > 15){return;}
+        Square clicked = squares[row][col];
+        if(clicked.getAdjacentMines() == 0 && !clicked.isExposed()){
+            clicked.setExposed();
 
+            exposeSquareAt(row + 1, col);
+            exposeSquareAt(row - 1, col);
+            exposeSquareAt(row, col + 1);
+            exposeSquareAt(row, col - 1);
+
+            clicked.draw(row, col);
+        }else{
+            return;
+        }
     }
 
     /** 
