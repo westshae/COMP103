@@ -151,16 +151,18 @@ public class MineSweeper {
      */
     public boolean hasWon(){
         boolean missedSquare = false;
+
+        //Iterates through every square
         for(int row = 0; row < 15; row++){
             for(int col = 0; col < 15; col++){
                 Square square = squares[row][col];
-                if(!square.hasMine() && !square.isExposed()){
+                if(!square.hasMine() && !square.isExposed()){//Checks for if a non-mined square hasn't been exposed. If it hasn't the player has missed a spot.
                     missedSquare = true;
                 }
             }
         }
 
-        return !missedSquare;
+        return !missedSquare;//Returns the inverse of missedSquare, because if they've missed a square (true) they've lost.
     }
 
     // completed methods
