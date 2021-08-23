@@ -96,14 +96,12 @@ public class MineSweeper {
      * (This method is not recursive)
      */
     public void tryExpose(int row, int col){
-        Square clicked = squares[row][col];
-        if(clicked.isExposed()){return;}
-        if(clicked.hasMine()){ drawLose(); }
-        else { exposeSquareAt(row, col); }
+        Square clicked = squares[row][col];//Gets the square from the list
+        if(clicked.isExposed()){return;}//If the square is already exposed, ignore it.
+        else if(clicked.hasMine()){ drawLose(); }//If the square is a mine, cause the lose screen
+        else { exposeSquareAt(row, col); } // If the square isn't exposed and doesn't have a mine, expose it.
 
-//        if (hasWon()){
-//            drawWin();
-//        }
+        if (hasWon()){ drawWin(); }//If the win condition is met, call the win function
     }
 
     /** 
@@ -119,31 +117,30 @@ public class MineSweeper {
      */
     public void exposeSquareAt(int row, int col){
         try {
-            if (row < 0 || row > 15 || col < 0 || col > 15) {
-                return;
-            }
-            UI.sleep(1);
-            System.out.println(row + ":" + col);
-            Square clicked = squares[row][col];
-            if (clicked.getAdjacentMines() == 0 && !clicked.isExposed()) {
+            UI.sleep(1);//Delays the function by a millisecond to decrease performance cost and for style.
+            Square clicked = squares[row][col];//Gets the square from the list
+
+            if (clicked.getAdjacentMines() == 0 && !clicked.isExposed()) {//If the square isn't next to mines and hasn't been exposed
                 clicked.setExposed();
                 clicked.draw(row, col);
-                if(row != 15 && col != 0)exposeSquareAt(row+1, col-1);
-                if(row != 15)exposeSquareAt(row+1, col);
-                if(row != 15 && col != 15)exposeSquareAt(row+1, col+1);
-                if(col != 0)exposeSquareAt(row, col-1);
-                if(col != 0)exposeSquareAt(row, col+1);
-                if(row != 0 && col != 0)exposeSquareAt(row-1, col-1);
-                if(row != 0)exposeSquareAt(row-1, col);
-                if(row != 0 && col != 15)exposeSquareAt(row-1, col+1);
 
+                //Recursively checks each square around the current square.
+                exposeSquareAt(row+1, col-1);
+                exposeSquareAt(row+1, col);
+                exposeSquareAt(row+1, col+1);
+                exposeSquareAt(row, col-1);
+                exposeSquareAt(row, col+1);
+                exposeSquareAt(row-1, col-1);
+                exposeSquareAt(row-1, col);
+                exposeSquareAt(row-1, col+1);
 
-            } else {
+            }
+            else if (!clicked.isExposed()){//If there is a mine next to the square
                 clicked.setExposed();
                 clicked.draw(row, col);
                 return;
             }
-        }catch (ArrayIndexOutOfBoundsException e){ return;}
+        }catch (ArrayIndexOutOfBoundsException e){ return;}//If the row/col are outside the boundaries, ignore this square.
     }
 
     /** 
@@ -153,9 +150,17 @@ public class MineSweeper {
      * (It doesn't matter if the squares with a mine have been marked or not).
      */
     public boolean hasWon(){
-        /*# YOUR CODE HERE */
+        boolean missedSquare = false;
+        for(int row = 0; row < 15; row++){
+            for(int col = 0; col < 15; col++){
+                Square square = squares[row][col];
+                if(!square.hasMine() && !square.isExposed()){
+                    missedSquare = true;
+                }
+            }
+        }
 
-        return true;
+        return !missedSquare;
     }
 
     // completed methods
