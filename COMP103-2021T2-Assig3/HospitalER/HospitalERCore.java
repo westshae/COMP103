@@ -33,9 +33,9 @@ import java.io.*;
 public class HospitalERCore{
 
     // Fields for recording the patients waiting in the waiting room and being treated in the treatment room
-    private Queue<Patient> waitingRoom = new ArrayDeque<Patient>();
+    private Queue<Patient> waitingRoom = new ArrayDeque<>();
     private static final int MAX_PATIENTS = 5;   // max number of patients currently being treated
-    private Set<Patient> treatmentRoom = new HashSet<Patient>();
+    private Set<Patient> treatmentRoom = new HashSet<>();
 
     // fields for the statistics
     private int treated = 0;
@@ -113,6 +113,7 @@ public class HospitalERCore{
      */
     public void run(){
         if (running) { return; } // don't start simulation if already running one!
+        reset(priority);
         running = true;
         while (running){         // each time step, check whether the simulation should pause.
             time++;//Increases tick by one
@@ -120,6 +121,7 @@ public class HospitalERCore{
             //Checks patient's treatment progress.
             HashSet<Patient> toRemove = new HashSet<>(); // Set which contains patients which needs to be removed from the treatment room
             for(Patient patient : treatmentRoom){//Iterates through treatment room patients
+                if(patient == null){continue;}
                 if(patient.completedCurrentTreatment()){//If current patient has finished treatments
                     toRemove.add(patient);//Adds the patient to a set to remove.
                 }
@@ -221,6 +223,7 @@ public class HospitalERCore{
         double x = 10;
         UI.drawRect(x-5, y-30, MAX_PATIENTS*10, 30);  // box to show max number of patients
         for(Patient p : treatmentRoom){
+            if(p == null){continue;}
             p.redraw(x, y);
             x += 10;
         }

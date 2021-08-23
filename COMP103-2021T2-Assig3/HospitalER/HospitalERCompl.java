@@ -217,26 +217,14 @@ public class HospitalERCompl{
                     continue;
                 }
 
-
                 else if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
-
-
                     if(!patient.noMoreTreatments()) {
                         Department nextDepartment = departments.get(getDepartmentFromString(patient.getCurrentTreatment()));
 
-
                         toRemove.add(patient);
                         nextDepartment.getWaitingRoom().offer(patient);
-
                     }
-                    else{
-                        System.out.println("FUCKER");
-                        System.out.println(patient);
-                    }
-
                     patient.incrementTreatmentNumber();
-
-
                 }
                 else{
                     patient.advanceTreatmentByTick();
@@ -250,7 +238,7 @@ public class HospitalERCompl{
 
     //Takes a string of the current department and returns the integer of it.
     public Integer getDepartmentFromString(String string){
-        switch (string.toLowerCase(Locale.ROOT)){
+        switch (string.toLowerCase(Locale.ROOT)){//lower-case version of department name
             case "er":
                 return 1;
             case "x-ray":
