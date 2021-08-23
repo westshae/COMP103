@@ -307,19 +307,6 @@ public class HospitalERCompl{
         double defaultY = 80;
         double changeY = 80;
         int count = 0;
-//
-//        for(var entry : hashmap.entrySet()){
-//            Department de = entry.getValue();
-//            for(Patient p : de.getWaitingRoom()){
-//                if(de.getWaitingRoom().isEmpty()){return;}
-//                if()
-//                System.out.println(p);
-//            }
-//            for(Patient p : de.getTreatmentRoom()){
-//                if(de.getTreatmentRoom().isEmpty()){return;}
-//                System.out.println(p);
-//            }
-//        }
 
         for(var entry : hashmap.entrySet()){
             Department department = entry.getValue();

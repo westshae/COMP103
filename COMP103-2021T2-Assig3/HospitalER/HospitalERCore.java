@@ -100,7 +100,7 @@ public class HospitalERCore{
         waitingRoom = new ArrayDeque<>();
         treatmentRoom = new HashSet<>();
         treated = 0;
-        waitTimes = new ArrayList<Integer>();
+        waitTimes = new ArrayList<>();
 
         priority = usePriorityQueue;
 
@@ -115,14 +115,6 @@ public class HospitalERCore{
         if (running) { return; } // don't start simulation if already running one!
         running = true;
         while (running){         // each time step, check whether the simulation should pause.
-
-            // Hint: if you are stepping through a set, you can't remove
-            //   items from the set inside the loop!
-            //   If you need to remove items, you can add the items to a
-            //   temporary list, and after the loop is done, remove all 
-            //   the items on the temporary list from the set.
-
-            /*# YOUR CODE HERE */
             time++;//Increases tick by one
 
             //Checks patient's treatment progress.
@@ -176,9 +168,7 @@ public class HospitalERCore{
                         treatmentRoom.add(current);
                         waitingRoom.remove(current);
                     }
-
                 }
-
             }
 
             // Get any new patient that has arrived and add them to the waiting room
