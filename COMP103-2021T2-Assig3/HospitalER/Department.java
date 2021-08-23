@@ -46,21 +46,11 @@ public class Department{
     public Boolean getQueueType(){ return this.queueType; }
     public Queue<Patient> getWaitingRoom(){ return this.waitingRoom; }
     public HashSet<Patient> getTreatmentRoom(){ return this.treatmentRoom; }
-    public Patient getFirstWaiting(){ return this.waitingRoom.poll(); }//Returns the first patient in the queue
 
-
-    public void setQueueType(boolean queueType){ this.queueType = queueType; }//Sets the type of queue, priority or regular
-    public void offerWaitingRoom(Patient patient){ this.waitingRoom.offer(patient); } // Adds a patient to the end of the queue
-
-    public void moveToTreatment(Patient patient){//Moves the patient from the waiting room to the treatment room
-        this.waitingRoom.remove(patient);
-        this.treatmentRoom.add(patient);
-    }
-
-    public void moveToNewDepartment(Department department, Patient patient){//Removes the patient from the current department and moves to the new department's waiting room
-        this.treatmentRoom.remove(patient);
-        department.offerWaitingRoom(patient);
-    }
+    //Setters
+    public void setQueueType(boolean queueType){ this.queueType = queueType; }
+    public void setWaitingRoom(Queue<Patient> queue){ this.waitingRoom = queue;}
+    public void setTreatmentRoom(HashSet<Patient> hashset){ this.treatmentRoom = hashset;}
 
     /**
      * Draw the department: the patients being treated and the patients waiting
@@ -71,12 +61,14 @@ public class Department{
         UI.drawString(name, 0, y-35);
         double x = 10;
         UI.drawRect(x-5, y-30, maxPatients*10, 30);  // box to show max number of patients
-        for(Patient p : treatmentRoom){
+        for(Patient p : this.getTreatmentRoom()){
+            if(p == null){break;}
             p.redraw(x, y);
             x += 10;
         }
         x = 200;
-        for(Patient p : waitingRoom){
+        for(Patient p : this.getWaitingRoom()){
+            if(p == null){break;}
             p.redraw(x, y);
             x += 10;
         }

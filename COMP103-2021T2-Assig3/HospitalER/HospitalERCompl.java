@@ -37,7 +37,7 @@ public class HospitalERCompl{
 
     // Fields for recording the patients waiting in the waiting room and being treated in the treatment room
     private static final int MAX_PATIENTS = 5;   // max number of patients currently being treated
-    private HashMap<String, Department> departments = new HashMap<>();//Creates a hashmap to contain all different waiting rooms, accessed by name of department
+    private HashMap<Integer, Department> departments = new HashMap<>();//Creates a hashmap to contain all different waiting rooms, accessed by name of department
 
 
     // fields for the statistics
@@ -104,10 +104,10 @@ public class HospitalERCompl{
         departments = new HashMap<>();
 
         //Initializes departments and puts them into the hashmap of all departments
-        departments.put("ER",new Department("ER", 5, false));
-        departments.put("Xray",new Department("Xray", 5, false));
-        departments.put("Surgery",new Department("Surgery", 5, false));
-        departments.put("Ultrasound",new Department("Ultrasound", 5, false));
+        departments.put(1,new Department("er", 5, false));
+        departments.put(2,new Department("xray", 5, false));
+        departments.put(3,new Department("surgery", 5, false));
+        departments.put(4,new Department("ultrasound", 5, false));
 
         treated = 0;//Resets treated number
         waitTimes = new ArrayList<Integer>(); // Reinitializes array of wait times
@@ -123,17 +123,17 @@ public class HospitalERCompl{
      */
     public void run(){
         if (running) { return; } // don't start simulation if already running one!
+        reset(priority);
         running = true;
         while (running){         // each time step, check whether the simulation should pause.
             time++;//Increases tick by one
 
+            patientArrival(departments);// Get any new patient that has arrived and add them to the waiting room
             patientTreatmentCheck();//Checks patient's treatments for if they are completed
             patientTicks();//Iterates through all patients in waiting room and adds a tick
             movePatientsFromWaitingToTreatment();//Moves patients from department waiting rooms to treatment rooms
-            patientArrival();// Get any new patient that has arrived and add them to the waiting room
 
-
-            redraw();
+            redraw(departments);
             UI.sleep(delay);
         }
         // paused, so report current statistics
@@ -143,11 +143,14 @@ public class HospitalERCompl{
     // Additional methods used by run() (You can define more of your own)
 
     //Function which adds a patient to the ER waiting room if time is = 1 or based on arrivalInterval
-    public void patientArrival(){
+    public void patientArrival(HashMap<Integer, Department> hashmap){
         if (time==1 || Math.random()<1.0/arrivalInterval){
-            Patient newPatient = new Patient(time, randomPriority());
-            UI.println(time+ ": Arrived: "+newPatient);
-            departments.get("ER").getWaitingRoom().offer(newPatient);//Adds all new patients to ER waiting room
+            Patient newPatient = new Patient(time, randomPriority());//Creates patient at current time with random priority
+            Department department = hashmap.get(1);//Gets the ER department from the hashmap
+
+            Queue<Patient> waitingRoom = department.getWaitingRoom();//Gets the waiting room queue
+            waitingRoom.offer(newPatient);//Adds the patient to the waiting room
+            department.setWaitingRoom(waitingRoom);//Sets the waiting room to the updated room.
         }
     }
 
@@ -157,8 +160,14 @@ public class HospitalERCompl{
             Department department = entry.getValue();
             if(department.getTreatmentRoom().size() < department.getMaxPatients()){
                 if(!priority){
-                    Patient patient = department.getFirstWaiting();
-                    department.moveToTreatment(patient);
+                    Queue<Patient> waitingRoom = department.getWaitingRoom();
+                    HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
+
+                    Patient patient = waitingRoom.poll();
+                    treatmentRoom.add(patient);
+
+                    department.setTreatmentRoom(treatmentRoom);
+                    department.setWaitingRoom(waitingRoom);
                 }
                 else{
                     Patient current = null;
@@ -171,8 +180,14 @@ public class HospitalERCompl{
                         }
                     }
                     if(current != null){
-                        department.getTreatmentRoom().add(current);
-                        department.getWaitingRoom().remove(current);
+                        Queue<Patient> waitingRoom = department.getWaitingRoom();
+                        HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
+
+                        Patient patient = waitingRoom.poll();
+                        treatmentRoom.add(patient);
+
+                        department.setTreatmentRoom(treatmentRoom);
+                        department.setWaitingRoom(waitingRoom);
                     }
                 }
             }
@@ -186,6 +201,7 @@ public class HospitalERCompl{
         for(var entry : departments.entrySet()){//Iterates through the treatmentRooms entries
             Department department = entry.getValue();//Gets current department
             for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
+                if(patient == null){return;}
                 if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
                     //TODO: Add check for if there are more treatments required.
                 }
@@ -227,33 +243,35 @@ public class HospitalERCompl{
     /**
      * Redraws all the departments
      */
-    public void redraw(){
+    public void redraw(HashMap<Integer, Department> hashmap){
         UI.clearGraphics();
         UI.setFontSize(14);
         UI.drawString("Treating Patients", 5, 15);
         UI.drawString("Waiting Queues", 200, 15);
         UI.drawLine(0,32,400, 32);
 
-        // Draw the treatment room and the waiting room:
-        double y = 80;
-        UI.setFontSize(14);
-        UI.drawString("ER", 0, y-35);
-        double x = 10;
-        UI.drawRect(x-5, y-30, MAX_PATIENTS*10, 30);  // box to show max number of patients
-        for(var entry : departments.entrySet()) {
-            for (Patient patient : entry.getValue().getTreatmentRoom()) {
-                patient.redraw(x, y);
-                x += 10;
-            }
+        double defaultY = 80;
+        double changeY = 80;
+        int count = 0;
+//
+//        for(var entry : hashmap.entrySet()){
+//            Department de = entry.getValue();
+//            for(Patient p : de.getWaitingRoom()){
+//                if(de.getWaitingRoom().isEmpty()){return;}
+//                if()
+//                System.out.println(p);
+//            }
+//            for(Patient p : de.getTreatmentRoom()){
+//                if(de.getTreatmentRoom().isEmpty()){return;}
+//                System.out.println(p);
+//            }
+//        }
+
+        for(var entry : hashmap.entrySet()){
+            Department department = entry.getValue();
+            department.redraw(defaultY + (changeY*count));
+            count++;
         }
-        x = 200;
-        for(var entry: departments.entrySet()) {
-            for (Patient patient : entry.getValue().getWaitingRoom()) {
-                patient.redraw(x, y);
-                x += 10;
-            }
-        }
-        UI.drawLine(0,y+2,400, y+2);
     }
 
     /**
