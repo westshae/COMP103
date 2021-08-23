@@ -3,9 +3,9 @@
 // You may not distribute it in any other way without permission.
 
 /* Code for COMP103 - 2021T2, Assignment 3
- * Name:
- * Username:
- * ID:
+ * Name: Shae West
+ * Username: westshae
+ * ID: 300565911
  */
 
 import ecs100.*;
@@ -29,11 +29,6 @@ import java.io.*;
  */
 
 public class HospitalERCompl{
-
-    // Copy the code from HospitalERCore and then modify/extend to handle multiple departments
-
-    /*# YOUR CODE HERE */
-
 
     // Fields for recording the patients waiting in the waiting room and being treated in the treatment room
     private static final int MAX_PATIENTS = 5;   // max number of patients currently being treated
@@ -161,40 +156,25 @@ public class HospitalERCompl{
             Department department = entry.getValue();
             if(department.getTreatmentRoom().size() < department.getMaxPatients()){
                 if(!priority){//If the priority queue isn't being used
-                    //Gets waiting/treatment rooms from departments
-                    Queue<Patient> waitingRoom = department.getWaitingRoom();
-                    HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
-
                     //Gets the first user in the waiting room and adds them to the treatment room
-                    Patient patient = waitingRoom.poll();
-                    treatmentRoom.add(patient);
-
-                    //Updates the department rooms
-                    department.setTreatmentRoom(treatmentRoom);
-                    department.setWaitingRoom(waitingRoom);
+                    Patient patient = department.getWaitingRoom().poll();
+                    department.getTreatmentRoom().add(patient);
                 }
                 else{//If the priority queue is being used
                     Patient current = null;
-                    for(Patient patient : department.getWaitingRoom()){//For each patient in the waiting room
-                        if(current == null){//If this is the first iteration, and therefore current is still equal to null, set the first patient to the current patient
+                    Queue<Patient> waitingRoom = department.getWaitingRoom();
+                    for(Patient patient : waitingRoom){//For each patient in the waiting room
+                        if(current == null){//If currentPatient doesn't exist, make first patient current highest priority
                             current = patient;
-                        }
-                        else if(current.compareTo(patient) == 1){//If the current patient is less priority or same priority and been waiting for longer, make compared patient current patient
-                            current = patient;
+                        }else{//If currentPatient does exist, compares it to current iteration of patient
+                            if(current.compareTo(patient) == 1){//If currentPriority patient is less then current patient
+                                current = patient;//Change current highest priority patient to current iteration of patient
+                            }
                         }
                     }
                     if(current != null){//Ensure the current patient has been initialized
-                        //Gets waiting/treatment rooms from departments
-                        Queue<Patient> waitingRoom = department.getWaitingRoom();
-                        HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
-
-                        //Gets the first user in the waiting room and adds them to the treatment room
-                        Patient patient = waitingRoom.poll();
-                        treatmentRoom.add(patient);
-
-                        //Updates the department rooms
-                        department.setTreatmentRoom(treatmentRoom);
-                        department.setWaitingRoom(waitingRoom);
+                        department.getWaitingRoom().remove(current);
+                        department.getTreatmentRoom().add(current);//Adds the highest priority patient to the treatment room
                     }
                 }
             }
@@ -212,25 +192,26 @@ public class HospitalERCompl{
             for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
                 if(patient == null){return;}
 
-                else if(patient.noMoreTreatments()){
+                else if(patient.noMoreTreatments()){//If patient completes all treatments, removes from treatment rooms
                     toRemove.add(patient);
                     continue;
                 }
 
                 else if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
-                    if(!patient.noMoreTreatments()) {
+                    if(!patient.noMoreTreatments()) {//If patient has more treatments, gets their next department and adds them to it
                         Department nextDepartment = departments.get(getDepartmentFromString(patient.getCurrentTreatment()));
 
                         toRemove.add(patient);
                         nextDepartment.getWaitingRoom().offer(patient);
+                    }else{//If patient has more treatments, increment's their current treatment number
+                        patient.incrementTreatmentNumber();
                     }
-                    patient.incrementTreatmentNumber();
                 }
-                else{
+                else{//If patient hasn't finished their treatments, advance treatment tick
                     patient.advanceTreatmentByTick();
                 }
             }
-            for(Patient patient : toRemove){
+            for(Patient patient : toRemove){//Removes all "to be removed" patients
                 department.getTreatmentRoom().remove(patient);
             }
         }
@@ -254,7 +235,7 @@ public class HospitalERCompl{
         return null;
     }
 
-
+    //Adds "waiting" ticks for all patients in waiting rooms
     public void patientTicks(){
         for(var entry : departments.entrySet()){//Iterates through the waitingRooms entries
             Department department = entry.getValue();//Gets current department
@@ -296,7 +277,7 @@ public class HospitalERCompl{
         double changeY = 80;
         int count = 0;
 
-        for(var entry : hashmap.entrySet()){
+        for(var entry : hashmap.entrySet()){//Draws all department data to screen UI.
             Department department = entry.getValue();
             department.redraw(defaultY + (changeY*count));
             count++;

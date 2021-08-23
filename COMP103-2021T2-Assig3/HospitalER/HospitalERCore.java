@@ -3,9 +3,9 @@
 // You may not distribute it in any other way without permission.
 
 /* Code for COMP103 - 2021T2, Assignment 3
- * Name:
- * Username:
- * ID:
+ * Name: Shae West
+ * Username: westshae
+ * ID: 300565911
  */
 
 import ecs100.*;
@@ -133,7 +133,7 @@ public class HospitalERCore{
             //Removes patients from treatment room
             for(Patient patient: toRemove){//Iterates through toRemove patients
                 treated++;//Increases treated patients number stat
-                waitTimes.add(patient.getWaitingTime());//Adds the waittime of the treated patient to the set of waittimes
+                waitTimes.add(patient.getWaitingTime());//Adds the wait time of the treated patient to the set of wait times
 
                 UI.println(time+ ": Discharge: " + patient);
                 treatmentRoom.remove(patient);
@@ -145,7 +145,7 @@ public class HospitalERCore{
             }
 
             //Moves patients to treatment room from waiting room
-            if(treatmentRoom.size() < 5){//If there is room inside the treatment room
+            if(treatmentRoom.size() < 6){//If there is room inside the treatment room
                 if(!priority) {//If priority queue isn't being used
                     Patient patient = waitingRoom.poll();//Gets the first patient in the queue
                     treatmentRoom.add(patient);//Adds the patient to treatment room
@@ -223,7 +223,7 @@ public class HospitalERCore{
         double x = 10;
         UI.drawRect(x-5, y-30, MAX_PATIENTS*10, 30);  // box to show max number of patients
         for(Patient p : treatmentRoom){
-            if(p == null){continue;}
+            if(p == null){continue;}//Skips null patients inside of treatment room
             p.redraw(x, y);
             x += 10;
         }
