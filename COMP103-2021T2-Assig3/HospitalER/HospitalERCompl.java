@@ -62,7 +62,7 @@ public class HospitalERCompl{
     public static void main(String[] arguments){
         HospitalERCompl er = new HospitalERCompl();
         er.setupGUI();
-        er.reset(false);   // initialise with an ordinary queue.
+        er.reset(true);   // initialise with an priority queue.
     }
 
     /**
@@ -105,9 +105,10 @@ public class HospitalERCompl{
 
         //Initializes departments and puts them into the hashmap of all departments
         departments.put(1,new Department("er", 5, false));
-        departments.put(2,new Department("xray", 5, false));
-        departments.put(3,new Department("surgery", 5, false));
-        departments.put(4,new Department("ultrasound", 5, false));
+        departments.put(2,new Department("xray", 2, false));
+        departments.put(3,new Department("surgery", 2, false));
+        departments.put(4,new Department("ultrasound", 2, false));
+        departments.put(5,new Department("mri", 2, false));
 
         treated = 0;//Resets treated number
         waitTimes = new ArrayList<Integer>(); // Reinitializes array of wait times
@@ -159,33 +160,39 @@ public class HospitalERCompl{
         for(var entry : departments.entrySet()){
             Department department = entry.getValue();
             if(department.getTreatmentRoom().size() < department.getMaxPatients()){
-                if(!priority){
+                if(!priority){//If the priority queue isn't being used
+                    //Gets waiting/treatment rooms from departments
                     Queue<Patient> waitingRoom = department.getWaitingRoom();
                     HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
 
+                    //Gets the first user in the waiting room and adds them to the treatment room
                     Patient patient = waitingRoom.poll();
                     treatmentRoom.add(patient);
 
+                    //Updates the department rooms
                     department.setTreatmentRoom(treatmentRoom);
                     department.setWaitingRoom(waitingRoom);
                 }
-                else{
+                else{//If the priority queue is being used
                     Patient current = null;
-                    for(Patient patient : department.getWaitingRoom()){
-                        if(current == null){
+                    for(Patient patient : department.getWaitingRoom()){//For each patient in the waiting room
+                        if(current == null){//If this is the first iteration, and therefore current is still equal to null, set the first patient to the current patient
                             current = patient;
                         }
-                        else if(current.compareTo(patient) == 1){
+                        else if(current.compareTo(patient) == 1){//If the current patient is less priority or same priority and been waiting for longer, make compared patient current patient
                             current = patient;
                         }
                     }
-                    if(current != null){
+                    if(current != null){//Ensure the current patient has been initialized
+                        //Gets waiting/treatment rooms from departments
                         Queue<Patient> waitingRoom = department.getWaitingRoom();
                         HashSet<Patient> treatmentRoom = department.getTreatmentRoom();
 
+                        //Gets the first user in the waiting room and adds them to the treatment room
                         Patient patient = waitingRoom.poll();
                         treatmentRoom.add(patient);
 
+                        //Updates the department rooms
                         department.setTreatmentRoom(treatmentRoom);
                         department.setWaitingRoom(waitingRoom);
                     }
@@ -200,16 +207,63 @@ public class HospitalERCompl{
     public void patientTreatmentCheck(){
         for(var entry : departments.entrySet()){//Iterates through the treatmentRooms entries
             Department department = entry.getValue();//Gets current department
+            HashSet<Patient> toRemove = new HashSet<>();
+
             for(Patient patient : department.getTreatmentRoom()){//Iterates through each department's treatment room's patients
                 if(patient == null){return;}
-                if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
-                    //TODO: Add check for if there are more treatments required.
+
+                else if(patient.noMoreTreatments()){
+                    toRemove.add(patient);
+                    continue;
+                }
+
+
+                else if(patient.completedCurrentTreatment()){//If the patient has finished their treatment
+
+
+                    if(!patient.noMoreTreatments()) {
+                        Department nextDepartment = departments.get(getDepartmentFromString(patient.getCurrentTreatment()));
+
+
+                        toRemove.add(patient);
+                        nextDepartment.getWaitingRoom().offer(patient);
+
+                    }
+                    else{
+                        System.out.println("FUCKER");
+                        System.out.println(patient);
+                    }
+
+                    patient.incrementTreatmentNumber();
+
+
                 }
                 else{
                     patient.advanceTreatmentByTick();
                 }
             }
+            for(Patient patient : toRemove){
+                department.getTreatmentRoom().remove(patient);
+            }
         }
+    }
+
+    //Takes a string of the current department and returns the integer of it.
+    public Integer getDepartmentFromString(String string){
+        switch (string.toLowerCase(Locale.ROOT)){
+            case "er":
+                return 1;
+            case "x-ray":
+                return 2;
+            case "surgery":
+                return 3;
+            case "ultrasound":
+                return 4;
+            case "mri":
+                return 5;
+
+        }
+        return null;
     }
 
 
