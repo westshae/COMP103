@@ -3,9 +3,9 @@
 // You may not distribute it in any other way without permission.
 
 /* Code for COMP103 - 2021T2, Assignment 4
- * Name:
- * Username:
- * ID:
+ * Name: Shae West  
+ * Username: westshae
+ * ID: 300565911
  */
 
 /**
@@ -74,7 +74,23 @@ public class DecisionTree {
      */
     public void printTree(){
         UI.clearText();
-        /*# YOUR CODE HERE */
+        
+        Stack<DTNode> stack = new Stack<>();
+
+        stack.add(theTree);
+
+        while(!stack.isEmpty()){
+            DTNode node = stack.pop(); 
+            if(node.getNo() != null){
+                stack.add(node.getNo());
+            }
+
+            if(node.getYes() != null){
+                stack.add(node.getYes());
+            }
+
+            UI.println(node.getText());
+        }
 
     }
 
