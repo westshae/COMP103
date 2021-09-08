@@ -74,12 +74,13 @@ public class DecisionTree {
      *  (The indentation string will be a string of space characters)
      */
     public void printTree(){
-        recursivePrintTree(theTree);
+        recursivePrintTree(theTree);//Calls recursive "helper method"
     }
 
     public void recursivePrintTree(DTNode node){
-        if(node != null){
+        if(node != null){//Only runs if the getYes/getNo node exists
             UI.println(node.getText());
+            //Recursively calls the function for both children
             recursivePrintTree(node.getYes());
             recursivePrintTree(node.getNo());
         }
@@ -94,13 +95,12 @@ public class DecisionTree {
      */
     public void runTree() {
         DTNode node = theTree;
-        boolean run = true;
-        while(run){
-            if(node.isAnswer()){
+        while(true){
+            if(node.isAnswer()){//If the node is the answer, only prints the node
                 UI.println("The answer is: " +node.getText());
-                run = false;
+                break;
             }
-            else{
+            else{//If the node isn't the answer, asks the current node's question
                 String response = UI.askString(node.getText());
                 switch(response.toLowerCase()){
                     case "yes":
@@ -110,6 +110,10 @@ public class DecisionTree {
                     case "no":
                         node = node.getNo();
                         continue;
+                    
+                    default:
+                        UI.println("invalid answer, only yes/no are accepted");
+                        break;
                 }
             }
         }
@@ -130,37 +134,47 @@ public class DecisionTree {
      */
     public void growTree () {
         DTNode node = theTree;
-        boolean run = true;
-        while(run){
-            if(!node.isAnswer()){
+        while(true){
+            if(!node.isAnswer()){//If the current node is a question
                 String response = UI.askString(node.getText());
-                switch(response.toLowerCase()){
+                switch(response.toLowerCase()){//Sets node to answer, or requests valid response
                     case "yes":
                         node = node.getYes();
-                        continue;                            
+                        continue;     
 
                     case "no":
                         node = node.getNo();
                         continue;
+
+                    default:
+                        UI.println("invalid response, only yes/no are accepted");
+                        break;
                 }
+                
             }
 
+            //Only reaches this point if the current node is the answer
             String correct = UI.askString(node.getText() + " : Is this correct?");
-            switch (correct.toLowerCase()) {
+            switch (correct.toLowerCase()) {//If yes, ignore, if no, add new node, else request valid response.
                 case "yes":
-                    run = false;
-                    continue;
+                    break;
 
                 case "no":
+                    //Asks for new answer and true/false question
                     String shouldBe = UI.askString("What should it be?  ");
                     String question = UI.askString("Question where " + shouldBe + " is true, " + node.getText() + " is false?: ");
+
+                    //Creates and updates node
                     DTNode yes = new DTNode(shouldBe);
                     DTNode no = new DTNode(node.getText());
                     node.setText(question + ":");
                     node.setChildren(yes, no);
                     UI.println("New node added to tree");
-                    run = false;
-                    continue;
+                    break;
+                
+                default:
+                    UI.println("invalid response, only yes/no are accepted");
+                    break;
             }
         }
     }
