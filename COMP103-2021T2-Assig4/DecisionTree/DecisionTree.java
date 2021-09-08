@@ -55,7 +55,7 @@ public class DecisionTree {
         UI.addButton("Print Tree", this::printTree);
         UI.addButton("Run Tree", this::runTree);
         UI.addButton("Grow Tree", this::growTree);
-        // UI.addButton("Save Tree", this::saveTree);  // for completion
+        UI.addButton("Save Tree", this::saveTree);  // for completion
         // UI.addButton("Draw Tree", this::drawTree);  // for challenge
         UI.addButton("Reset", ()->{loadTree("sample-animal-tree.txt");});
         UI.addButton("Quit", UI::quit);
@@ -197,6 +197,39 @@ public class DecisionTree {
                     UI.println("invalid response, only yes/no are accepted");
                     break;
             }
+        }
+    }
+
+    private ArrayList<String> toSave = new ArrayList<String>();//Global string to save list of lines to save to file
+
+    public void saveTree(){
+        toSave = new ArrayList<String>();//Resets list of lines
+        recursiveSaveTree(theTree);
+
+        try{//Creates the file, asks for a filename, saves the list of lines to the file, then saves the file
+            FileWriter file = new FileWriter(UI.askString("File name?") + ".txt"); 
+            for(String currentString: toSave) {
+                file.write(currentString + "\n");
+            }
+            file.close();
+        }catch(IOException e){
+            System.out.println(e);
+        }
+    }
+
+    public void recursiveSaveTree(DTNode node){
+        if(node != null){//Only runs if the getYes/getNo node exists
+            if(node.isAnswer()){
+                UI.println("Answer: " + node.getText());
+                toSave.add("Answer: " + node.getText());
+            }else{
+                UI.println("Question: " + node.getText());
+                toSave.add("Question: " + node.getText());
+            }
+            
+            //Recursively calls the function for both children
+            recursiveSaveTree(node.getYes());
+            recursiveSaveTree(node.getNo());
         }
     }
 
