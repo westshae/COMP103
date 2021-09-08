@@ -132,8 +132,8 @@ public class DecisionTree {
         DTNode node = theTree;
         boolean run = true;
         while(run){
-            String response = UI.askString(node.getText());
             if(!node.isAnswer()){
+                String response = UI.askString(node.getText());
                 switch(response.toLowerCase()){
                     case "yes":
                         node = node.getYes();
@@ -149,12 +149,18 @@ public class DecisionTree {
             switch (correct.toLowerCase()) {
                 case "yes":
                     run = false;
+                    continue;
 
                 case "no":
                     String shouldBe = UI.askString("What should it be?  ");
-                    DTNode yes = new DTNode(UI.askString(""));
-                    // DTNode no = new DTNode();
-                    // node.setChildren();
+                    String question = UI.askString("Question where " + shouldBe + " is true, " + node.getText() + " is false?: ");
+                    DTNode yes = new DTNode(shouldBe);
+                    DTNode no = new DTNode(node.getText());
+                    node.setText(question + ":");
+                    node.setChildren(yes, no);
+                    UI.println("New node added to tree");
+                    run = false;
+                    continue;
             }
         }
     }
