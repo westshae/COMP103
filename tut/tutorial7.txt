@@ -1,0 +1,48 @@
+
+import ecs100.*;
+import java.util.*;
+
+public class AncestryTree {
+
+ /** Prints the tree starting at =p= to =out= so that it can be loaded back later. 
+     * Assumes out is a PrintStream that is already connected to a file */ 
+   public void saveTree(Person p, PrintStream out){
+		if(p == null){return;}//If the current person is null, then that means there was no mother/father, so nothing needs to be added
+		out.append(p.toString());//Adds person string to output file
+		
+		//Recursively calls the function with both the mother and father
+		saveTree(p.getMother(), out);
+		saveTree(p.getFather(), out);
+   }
+
+
+}
+
+
+
+class Person {
+    private String name;
+    private int YoB;
+    private Person mother;
+    private Person father;
+
+    /** Construct a person with a given name and year of birth */
+    public Person(String n, int y){
+        name = n;
+        YoB = y;
+    }
+
+    /** Getters */
+    public String getName(){ return name; }
+    public int getYoB(){ return YoB; }
+    public Person getMother(){ return mother; } 
+    public Person getFather(){ return father; }
+
+    /** Setters */ 
+    public void setMother(Person m){ mother=m; } 
+    public void setFather(Person f){ father = f; }
+
+    /** toString */
+    public String toString(){ return name+" "+YoB+" "+(mother!=null)+" "+(father!=null); }
+}
+

@@ -30,6 +30,7 @@
 import ecs100.*;
 import java.util.*;
 import java.io.*;
+import java.net.http.HttpResponse.ResponseInfo;
 import java.nio.file.*;
 import java.awt.Color;
 
@@ -73,25 +74,15 @@ public class DecisionTree {
      *  (The indentation string will be a string of space characters)
      */
     public void printTree(){
-        UI.clearText();
-        
-        Stack<DTNode> stack = new Stack<>();
+        recursivePrintTree(theTree);
+    }
 
-        stack.add(theTree);
-
-        while(!stack.isEmpty()){
-            DTNode node = stack.pop(); 
-            if(node.getNo() != null){
-                stack.add(node.getNo());
-            }
-
-            if(node.getYes() != null){
-                stack.add(node.getYes());
-            }
-
+    public void recursivePrintTree(DTNode node){
+        if(node != null){
             UI.println(node.getText());
+            recursivePrintTree(node.getYes());
+            recursivePrintTree(node.getNo());
         }
-
     }
 
     /**
@@ -102,7 +93,29 @@ public class DecisionTree {
      * and depending on the answer, goes to the "yes" child or the "no" child.
      */
     public void runTree() {
-        /*# YOUR CODE HERE */
+        DTNode node = theTree;
+        boolean run = true;
+        while(run){
+            String response = UI.askString(node.getText());
+            if(response.toLowerCase().equals("yes")){
+                if(node.getYes() != null){
+                    node = node.getYes();
+                }
+                else{
+                    UI.println(node.getText());
+                    run = false;
+                }
+            }
+            else if(response.toLowerCase().equals("no")){
+                if(node.getNo() != null){
+                    node = node.getNo();
+                }
+                else{
+                    UI.println(node.getText());
+                    run = false;
+                }
+            }
+        }
 
     }
 
