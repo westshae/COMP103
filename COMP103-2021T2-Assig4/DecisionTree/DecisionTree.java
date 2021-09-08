@@ -74,15 +74,36 @@ public class DecisionTree {
      *  (The indentation string will be a string of space characters)
      */
     public void printTree(){
-        recursivePrintTree(theTree);//Calls recursive "helper method"
+        recursivePrintTree(theTree, "",0);//Calls recursive "helper method"
     }
 
-    public void recursivePrintTree(DTNode node){
+    public void recursivePrintTree(DTNode node, String yesNo, int indent){
+        //CORE CODE
+        // if(node != null){//Only runs if the getYes/getNo node exists
+        //     UI.println(node.getText());
+        //     //Recursively calls the function for both children
+        //     recursivePrintTree(node.getYes(), "yes", current);
+        //     recursivePrintTree(node.getNo(), "no", current);
+        // }
+
         if(node != null){//Only runs if the getYes/getNo node exists
-            UI.println(node.getText());
+
+            //Creates string builder, and for each indent number, creates 4 spaces at the beginning of the message
+            StringBuilder builder = new StringBuilder("");
+            for(int i = 0; i < indent; i++){
+                builder.append("    ").toString();
+            }
+
+            //If current node is answer, increase indent, else decrease indent
+            if(node.isAnswer()){indent--;}
+            else{indent++;}
+
+
+            UI.println(builder.toString() + yesNo + node.getText());
+            
             //Recursively calls the function for both children
-            recursivePrintTree(node.getYes());
-            recursivePrintTree(node.getNo());
+            recursivePrintTree(node.getYes(), "y:", indent);
+            recursivePrintTree(node.getNo(), "n:", indent);
         }
     }
 
