@@ -96,27 +96,23 @@ public class DecisionTree {
         DTNode node = theTree;
         boolean run = true;
         while(run){
-            String response = UI.askString(node.getText());
-            if(response.toLowerCase().equals("yes")){
-                if(node.getYes() != null){
-                    node = node.getYes();
-                }
-                else{
-                    UI.println(node.getText());
-                    run = false;
-                }
+            if(node.isAnswer()){
+                UI.println("The answer is: " +node.getText());
+                run = false;
             }
-            else if(response.toLowerCase().equals("no")){
-                if(node.getNo() != null){
-                    node = node.getNo();
-                }
-                else{
-                    UI.println(node.getText());
-                    run = false;
+            else{
+                String response = UI.askString(node.getText());
+                switch(response.toLowerCase()){
+                    case "yes":
+                        node = node.getYes();
+                        continue;                            
+
+                    case "no":
+                        node = node.getNo();
+                        continue;
                 }
             }
         }
-
     }
 
     /**
@@ -133,8 +129,34 @@ public class DecisionTree {
      *  - adds two new children (leaf nodes) to the node with the two decisions.
      */
     public void growTree () {
-        /*# YOUR CODE HERE */
+        DTNode node = theTree;
+        boolean run = true;
+        while(run){
+            String response = UI.askString(node.getText());
+            if(!node.isAnswer()){
+                switch(response.toLowerCase()){
+                    case "yes":
+                        node = node.getYes();
+                        continue;                            
 
+                    case "no":
+                        node = node.getNo();
+                        continue;
+                }
+            }
+
+            String correct = UI.askString(node.getText() + " : Is this correct?");
+            switch (correct.toLowerCase()) {
+                case "yes":
+                    run = false;
+
+                case "no":
+                    String shouldBe = UI.askString("What should it be?  ");
+                    DTNode yes = new DTNode(UI.askString(""));
+                    // DTNode no = new DTNode();
+                    // node.setChildren();
+            }
+        }
     }
 
     // You will need to define methods for the Completion and Challenge parts.
