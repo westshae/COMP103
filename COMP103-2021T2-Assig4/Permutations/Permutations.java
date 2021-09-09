@@ -56,26 +56,27 @@ public class Permutations {
      * So that you don't run out of memory, only add the first 10000 permutations to the allPermutations.
      */
     public void extendPermutation(ArrayList<String> remainingItems, Stack<String> permutationSoFar, List<List<String>> allPermutations){
-        if(remainingItems.isEmpty()){
+        if(remainingItems.isEmpty()){//If remainingItems is empty
             allPermutations.add(permutationSoFar);
             counter++;
         }
-        else{
-            System.out.println();
-            for(int i = 0; i < remainingItems.size(); i++){
+        else{//If remainingItems isn't empty
+            for(int i = 0; i < remainingItems.size(); i++){//For each remaining item
                 String current = remainingItems.get(i);
 
+                //Creates copy of remaining items and removes the current string from it
                 ArrayList<String> remainCopy = new ArrayList<String>(remainingItems);
                 remainCopy.remove(i);
 
-                permutationSoFar.push(current);
+                permutationSoFar.push(current);//Adds the letter to permutationSoFar
 
+                //Creates copy of permutationSoFar
                 Stack<String> permCopy = new Stack<String>();
                 permCopy.addAll(permutationSoFar);
 
-                extendPermutation(remainCopy, permCopy, allPermutations);
+                extendPermutation(remainCopy, permCopy, allPermutations);//Recursive call
 
-                if(!permutationSoFar.isEmpty()){
+                if(!permutationSoFar.isEmpty()){//Adds back to retainingItems
                     remainCopy.add(permutationSoFar.pop());
                 }
             }
