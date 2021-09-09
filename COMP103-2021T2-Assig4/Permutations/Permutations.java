@@ -29,7 +29,8 @@ public class Permutations {
      */
     public List<List<String>> findPermutations(Set<String> items){
 
-        Set<String> copyOfItems = new HashSet<String>(items);   // a copy of the set of items that can be modified
+
+        ArrayList<String> copyOfItems = new ArrayList<String>(items);   // a copy of the set of items that can be modified
         List<List<String>> ans = new ArrayList<List<String>>(); // where we will collect the answer
         counter=0;
         //suggested approach:
@@ -54,10 +55,34 @@ public class Permutations {
      *
      * So that you don't run out of memory, only add the first 10000 permutations to the allPermutations.
      */
-    public void extendPermutation(Set<String> remainingItems, Stack<String> permutationSoFar, List<List<String>> allPermutations){
-        /*# YOUR CODE HERE */
+    public void extendPermutation(ArrayList<String> remainingItems, Stack<String> permutationSoFar, List<List<String>> allPermutations){
+        if(remainingItems.isEmpty()){
+            allPermutations.add(permutationSoFar);
+            counter++;
+        }
+        else{
+            System.out.println();
+            for(int i = 0; i < remainingItems.size(); i++){
+                String current = remainingItems.get(i);
 
+                ArrayList<String> remainCopy = new ArrayList<String>(remainingItems);
+                remainCopy.remove(i);
+
+                permutationSoFar.push(current);
+
+                Stack<String> permCopy = new Stack<String>();
+                permCopy.addAll(permutationSoFar);
+
+                extendPermutation(remainCopy, permCopy, allPermutations);
+
+                if(!permutationSoFar.isEmpty()){
+                    remainCopy.add(permutationSoFar.pop());
+                }
+            }
+        }
+        
     }
+    
 
     //===================================================
     // User Interface code
