@@ -27,7 +27,7 @@ import java.nio.file.*;
 public class CPNCalculator{
 
     //Saves
-    HashSet<String> dict = new HashSet<>(Arrays.asList("+", "-", "/", "*"));
+    HashSet<String> dict = new HashSet<>(Arrays.asList("+", "-", "/", "*", "PI", "E"));
 
     /**
      * Setup GUI then run the calculator
@@ -134,9 +134,16 @@ public class CPNCalculator{
                         sum = sum * values.get(i);
                     }
                     break;
+
+                case "PI":
+                    sum = Math.PI;
+                    break;
+
+                case "E":
+                    sum = Math.E;
+                    break;
             }
 
-            UI.println(sum);
             return sum;            
         }
         
