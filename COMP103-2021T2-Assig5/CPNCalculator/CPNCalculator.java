@@ -80,8 +80,6 @@ public class CPNCalculator{
      *  => evaluate all the children and then apply the operator.
      */
     public double evaluate(GTNode<ExpElem> expr){
-        UI.println(expr.getItem().operator);
-
         /*# YOUR CODE HERE */
         //If the expression is a number, return the number
         if(expr.getItem().operator.equals("#")){
@@ -99,7 +97,6 @@ public class CPNCalculator{
             //Adds all children as numbers
             for(int i = 0; i < expr.numberOfChildren(); i++){
                 double value = evaluate(expr.getChild(i));
-                UI.println(value);
                 values.add(value);
             }
 
