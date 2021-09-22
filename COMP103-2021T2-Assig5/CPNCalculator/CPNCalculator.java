@@ -26,6 +26,9 @@ import java.nio.file.*;
 
 public class CPNCalculator{
 
+    //Saves
+    HashSet<String> dict = new HashSet<>(Arrays.asList("+", "-", "/", "*"));
+
     /**
      * Setup GUI then run the calculator
      */
@@ -81,7 +84,37 @@ public class CPNCalculator{
         }
 
         /*# YOUR CODE HERE */
+        //If the expression is a number, return the number
+        if(expr.getItem().operator.equals("#")){
+            return expr.getItem().value;
+        }
 
+        //If the dictionary of expressions contains the expr operator, run the operand.
+        if(dict.contains(expr.getItem().operator)){
+            String operand = expr.getItem().operator;
+            
+            //Creates values for operand
+            ArrayList<Double> values = new ArrayList<>();
+            double sum = 0;
+
+            //Adds all children as numbers
+            for(int i = 0; i < expr.numberOfChildren(); i++){
+                double value = evaluate(expr.getChild(i));
+                values.add(value);
+            }
+
+            //Calculates sum based on operand
+            switch(operand){
+                case "+":
+                    for(int i = 0; i < values.size(); i++){
+                        sum += values.get(i);
+        
+                    }
+            }
+
+            return sum;            
+        }
+        
         return Double.NaN;
     }
 
@@ -99,7 +132,9 @@ public class CPNCalculator{
      */
     public GTNode<ExpElem> readExpr(Scanner sc){
         if (sc.hasNextDouble()) {                     // next token is a number: return a new node
-            return new GTNode<ExpElem>(new ExpElem(sc.nextDouble()));
+            double current = sc.nextDouble();
+            UI.println(current);
+            return new GTNode<ExpElem>(new ExpElem(current));
         }
         else if (sc.hasNext("\\(")) {                 // next token is an opening bracket
             sc.next();                                // read and throw away the opening '('
