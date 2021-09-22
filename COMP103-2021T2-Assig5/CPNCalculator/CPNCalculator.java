@@ -205,19 +205,19 @@ public class CPNCalculator{
                     break;
 
                 case "dist":
-                    if(!(values.size() == 4) || values.size() == 6){
+                    if(!(values.size() == 4 || values.size() == 6)){
                         UI.println("dist can only have four or six operand");
                         return Double.NaN;
                     }
                     if(values.size() == 4){
                         double diffX = values.get(2) - values.get(0);
                         double diffY = values.get(3) - values.get(1);
-                        sum = Math.sqrt(Math.sqrt((Math.pow(diffX, 2) + Math.pow(diffY, 2))));
+                        sum = Math.sqrt(((Math.pow(diffX, 2) + Math.pow(diffY, 2))));
                     }else if(values.size() == 6){
                         double diffX = values.get(3) - values.get(0);
                         double diffY = values.get(4) - values.get(1);
                         double diffZ = values.get(5) - values.get(2);
-                        sum = Math.sqrt(Math.sqrt((Math.pow(diffX, 2) + Math.pow(diffY, 2) + Math.pow(diffZ, 2))));
+                        sum = Math.sqrt((Math.pow(diffX, 2) + Math.pow(diffY, 2) + Math.pow(diffZ, 2)));
                     }
                     break;
 
