@@ -118,14 +118,18 @@ public class CPNCalculator{
 
                 case "/":
                     for(int i = 0; i < values.size(); i++){
-                        sum = sum / values.get(i);
+                        if(i == 0){
+                            sum = values.get(i);
+                        }else{
+                            sum = sum / values.get(i);
+                        }
                     }
                     break;
                 
                 case "*":
                     for(int i = 0; i < values.size(); i++){
                         if(i == 0){
-                            sum = values.get(i);
+                            sum = 1;
                         }
                         sum = sum * values.get(i);
                     }
