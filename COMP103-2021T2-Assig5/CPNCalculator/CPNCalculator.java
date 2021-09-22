@@ -145,18 +145,34 @@ public class CPNCalculator{
                     break;
                 
                 case "^":
+                    if(values.size() != 2){
+                        UI.println("^ can only have two operand");
+                        return Double.NaN;
+                    }
                     sum = Math.pow(values.get(0), values.get(1));
                     break;
 
                 case "sqrt":
+                    if(values.size() != 1){
+                        UI.println("sqrt can only have one operand");
+                        return Double.NaN;
+                    }
                     sum = Math.sqrt(values.get(0));
                     break;
 
                 case "ln":
+                    if(values.size() != 1){
+                        UI.println("ln can only have one operand");
+                        return Double.NaN;
+                    }
                     sum = Math.log(values.get(0));
                     break;
 
                 case "log":
+                    if(!(values.size() == 1 || values.size() == 2)){
+                        UI.println("log can only have one or two operand");
+                        return Double.NaN;
+                    }
                     if(values.size() == 2){
                         sum = ( Math.log10(values.get(0)) / Math.log10(values.get(1)) );
                     }else{
@@ -165,18 +181,34 @@ public class CPNCalculator{
                     break;
 
                 case "sin":
+                    if(values.size() != 1){
+                        UI.println("sin can only have one operand");
+                        return Double.NaN;
+                    }
                     sum = Math.sin(values.get(0));
                     break;
 
                 case "cos":
+                    if(values.size() != 1){
+                        UI.println("cos can only have one operand");
+                        return Double.NaN;
+                    }
                     sum = Math.cos(values.get(0));
                     break;
 
                 case "tan":
+                    if(values.size() != 1){
+                        UI.println("tan can only have one operand");
+                        return Double.NaN;
+                    }
                     sum = Math.tan(values.get(0));
                     break;
 
                 case "dist":
+                    if(!(values.size() == 4) || values.size() == 6){
+                        UI.println("dist can only have four or six operand");
+                        return Double.NaN;
+                    }
                     if(values.size() == 4){
                         double diffX = values.get(2) - values.get(0);
                         double diffY = values.get(3) - values.get(1);
