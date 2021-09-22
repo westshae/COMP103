@@ -79,9 +79,7 @@ public class CPNCalculator{
      *  => evaluate all the children and then apply the operator.
      */
     public double evaluate(GTNode<ExpElem> expr){
-        if (expr==null){
-            return Double.NaN;
-        }
+        UI.println(expr.getItem().operator);
 
         /*# YOUR CODE HERE */
         //If the expression is a number, return the number
@@ -100,6 +98,7 @@ public class CPNCalculator{
             //Adds all children as numbers
             for(int i = 0; i < expr.numberOfChildren(); i++){
                 double value = evaluate(expr.getChild(i));
+                UI.println(value);
                 values.add(value);
             }
 
@@ -108,10 +107,32 @@ public class CPNCalculator{
                 case "+":
                     for(int i = 0; i < values.size(); i++){
                         sum += values.get(i);
-        
                     }
+                    break;
+                
+                case "-":
+                    for(int i = 0; i < values.size(); i++){
+                        sum -= values.get(i);
+                    }
+                    break;
+
+                case "/":
+                    for(int i = 0; i < values.size(); i++){
+                        sum = sum / values.get(i);
+                    }
+                    break;
+                
+                case "*":
+                    for(int i = 0; i < values.size(); i++){
+                        if(i == 0){
+                            sum = values.get(i);
+                        }
+                        sum = sum * values.get(i);
+                    }
+                    break;
             }
 
+            UI.println(sum);
             return sum;            
         }
         
@@ -132,9 +153,7 @@ public class CPNCalculator{
      */
     public GTNode<ExpElem> readExpr(Scanner sc){
         if (sc.hasNextDouble()) {                     // next token is a number: return a new node
-            double current = sc.nextDouble();
-            UI.println(current);
-            return new GTNode<ExpElem>(new ExpElem(current));
+            return new GTNode<ExpElem>(new ExpElem(sc.nextDouble()));
         }
         else if (sc.hasNext("\\(")) {                 // next token is an opening bracket
             sc.next();                                // read and throw away the opening '('
