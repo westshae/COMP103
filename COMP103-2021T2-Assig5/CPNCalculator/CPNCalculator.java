@@ -27,7 +27,8 @@ import java.nio.file.*;
 public class CPNCalculator{
 
     //Saves
-    HashSet<String> dict = new HashSet<>(Arrays.asList("+", "-", "/", "*", "PI", "E"));
+    HashSet<String> dict = new HashSet<>(Arrays.asList("+", "-", "/", "*", "PI", "E", "^", "sqrt", "log", "ln", "sin", "cos", "tan", "dist", "avg"));
+    boolean useTest = true;
 
     /**
      * Setup GUI then run the calculator
@@ -142,6 +143,58 @@ public class CPNCalculator{
                 case "E":
                     sum = Math.E;
                     break;
+                
+                case "^":
+                    sum = Math.pow(values.get(0), values.get(1));
+                    break;
+
+                case "sqrt":
+                    sum = Math.sqrt(values.get(0));
+                    break;
+
+                case "ln":
+                    sum = Math.log(values.get(0));
+                    break;
+
+                case "log":
+                    if(values.size() == 2){
+                        sum = ( Math.log10(values.get(0)) / Math.log10(values.get(1)) );
+                    }else{
+                        sum = Math.log10(values.get(0));
+                    }
+                    break;
+
+                case "sin":
+                    sum = Math.sin(values.get(0));
+                    break;
+
+                case "cos":
+                    sum = Math.cos(values.get(0));
+                    break;
+
+                case "tan":
+                    sum = Math.tan(values.get(0));
+                    break;
+
+                case "dist":
+                    if(values.size() == 4){
+                        double diffX = values.get(2) - values.get(0);
+                        double diffY = values.get(3) - values.get(1);
+                        sum = Math.sqrt(Math.sqrt((Math.pow(diffX, 2) + Math.pow(diffY, 2))));
+                    }else if(values.size() == 6){
+                        double diffX = values.get(3) - values.get(0);
+                        double diffY = values.get(4) - values.get(1);
+                        double diffZ = values.get(5) - values.get(2);
+                        sum = Math.sqrt(Math.sqrt((Math.pow(diffX, 2) + Math.pow(diffY, 2) + Math.pow(diffZ, 2))));
+                    }
+                    break;
+
+                case "avg":
+                    for(int i = 0; i < values.size(); i++){
+                        sum += values.get(i);
+                    }
+                    sum = sum / values.size();
+                    
             }
 
             return sum;            
