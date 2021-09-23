@@ -98,6 +98,7 @@ public class OrganisationChart {
         }
         else if (action.equals("released")){
             Position targetPosition = findPosition(x, y, organisation);
+            // System.out.println(targetPosition);
 
             // pressed on "new" icon, released on a target
             if (newPosition && targetPosition != null){
@@ -162,6 +163,21 @@ public class OrganisationChart {
      */
     private Position findPosition(double x, double y, Position pos){
         /*# YOUR CODE HERE */
+        if(pos.on(x,y)){
+            return pos;
+        }
+
+        for(Position newPos : pos.getTeam()){
+            if(newPos.on(x, y)){
+                return newPos;
+            }
+            Position returned = findPosition(x, y, newPos);
+            
+            if(returned != null){
+                return returned;
+            }
+            
+        }
 
         return null;  // it wasn't found;
     }
@@ -200,6 +216,8 @@ public class OrganisationChart {
      */
     public void removePosition(Position pos){
         /*# YOUR CODE HERE */
+        pos.getManager().removeFromTeam(pos);
+        
 
     }
 

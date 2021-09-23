@@ -91,7 +91,11 @@ public class Position {
      */
     public void removeFromTeam(Position teamMemb){
         /*# YOUR CODE HERE */
-
+        if(!teamMemb.isManager()){
+            teamMemb.manager = null;
+            this.team.remove(teamMemb);
+        }
+        
     }
 
     // Simple getters and setters  ==================================
