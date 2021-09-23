@@ -102,19 +102,19 @@ public class CPNCalculator{
 
             //Calculates sum based on operand
             switch(operand){
-                case "+":
+                case "+"://Iterates and adds each value
                     for(int i = 0; i < values.size(); i++){
                         sum += values.get(i);
                     }
                     break;
                 
-                case "-":
+                case "-"://Iterates and subtracts each value
                     for(int i = 0; i < values.size(); i++){
                         sum -= values.get(i);
                     }
                     break;
 
-                case "/":
+                case "/"://Iterates and divides each value
                     for(int i = 0; i < values.size(); i++){
                         if(i == 0){
                             sum = values.get(i);
@@ -124,7 +124,7 @@ public class CPNCalculator{
                     }
                     break;
                 
-                case "*":
+                case "*"://Iterates and multiplies each value
                     for(int i = 0; i < values.size(); i++){
                         if(i == 0){
                             sum = 1;
@@ -133,15 +133,15 @@ public class CPNCalculator{
                     }
                     break;
 
-                case "PI":
+                case "PI"://Returns PI value
                     sum = Math.PI;
                     break;
 
-                case "E":
+                case "E"://Returns E value
                     sum = Math.E;
                     break;
                 
-                case "^":
+                case "^"://Ensures 2 operands, then uses Math.pow(er);
                     if(values.size() != 2){
                         UI.println("^ can only have two operand");
                         return Double.NaN;
@@ -149,7 +149,7 @@ public class CPNCalculator{
                     sum = Math.pow(values.get(0), values.get(1));
                     break;
 
-                case "sqrt":
+                case "sqrt"://Ensures 1 operand, then sqrt's value
                     if(values.size() != 1){
                         UI.println("sqrt can only have one operand");
                         return Double.NaN;
@@ -157,7 +157,7 @@ public class CPNCalculator{
                     sum = Math.sqrt(values.get(0));
                     break;
 
-                case "ln":
+                case "ln"://Ensures 1 operand, then ln's value
                     if(values.size() != 1){
                         UI.println("ln can only have one operand");
                         return Double.NaN;
@@ -165,7 +165,7 @@ public class CPNCalculator{
                     sum = Math.log(values.get(0));
                     break;
 
-                case "log":
+                case "log"://Checks size 1 or 2, 1 is normal log10, 2 is new base
                     if(!(values.size() == 1 || values.size() == 2)){
                         UI.println("log can only have one or two operand");
                         return Double.NaN;
@@ -177,7 +177,7 @@ public class CPNCalculator{
                     }
                     break;
 
-                case "sin":
+                case "sin"://Ensures 1 operand, does sin calc
                     if(values.size() != 1){
                         UI.println("sin can only have one operand");
                         return Double.NaN;
@@ -185,7 +185,7 @@ public class CPNCalculator{
                     sum = Math.sin(values.get(0));
                     break;
 
-                case "cos":
+                case "cos"://Ensures 1 operand, does cos calc
                     if(values.size() != 1){
                         UI.println("cos can only have one operand");
                         return Double.NaN;
@@ -193,7 +193,7 @@ public class CPNCalculator{
                     sum = Math.cos(values.get(0));
                     break;
 
-                case "tan":
+                case "tan"://Ensures 1 operand, does tan calc
                     if(values.size() != 1){
                         UI.println("tan can only have one operand");
                         return Double.NaN;
@@ -201,7 +201,7 @@ public class CPNCalculator{
                     sum = Math.tan(values.get(0));
                     break;
 
-                case "dist":
+                case "dist"://Ensures size 4 or 6, then does distance formula dependant on size
                     if(!(values.size() == 4 || values.size() == 6)){
                         UI.println("dist can only have four or six operand");
                         return Double.NaN;
@@ -218,7 +218,7 @@ public class CPNCalculator{
                     }
                     break;
 
-                case "avg":
+                case "avg"://Sums values then divides by number of values
                     for(int i = 0; i < values.size(); i++){
                         sum += values.get(i);
                     }
