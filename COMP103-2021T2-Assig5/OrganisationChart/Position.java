@@ -80,8 +80,8 @@ public class Position {
     public void addToTeam(Position newMemb){
         if (newMemb == null) return;
         /*# YOUR CODE HERE */
+        newMemb.manager = this;
         this.team.add(newMemb);
-        UI.println(this.team);
 
     }
 
