@@ -188,6 +188,10 @@ public class OrganisationChart {
      */
     public void addNewPosition(Position newPos, Position target){
         /*# YOUR CODE HERE */
+        if(newPos != null && target != null){
+            target.addToTeam(newPos);
+        }
+
 
     }
 
@@ -205,6 +209,11 @@ public class OrganisationChart {
     private void movePosition(Position pos, Position target) {
         if ((pos == null) || (target == null)){return;}   //invalid arguments.
         /*# YOUR CODE HERE */
+        if(pos == organisation){
+            return;
+        }
+        pos.getManager().removeFromTeam(pos);
+        target.addToTeam(pos);
 
     }
 
