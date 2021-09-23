@@ -80,6 +80,7 @@ public class Position {
     public void addToTeam(Position newMemb){
         if (newMemb == null) return;
         /*# YOUR CODE HERE */
+        //Makes newMember manager be the current position and adds to team
         newMemb.manager = this;
         this.team.add(newMemb);
 
@@ -91,6 +92,7 @@ public class Position {
      */
     public void removeFromTeam(Position teamMemb){
         /*# YOUR CODE HERE */
+        //If not manage, set manager to null and remove from team
         if(!teamMemb.isManager()){
             teamMemb.manager = null;
             this.team.remove(teamMemb);

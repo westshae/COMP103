@@ -149,6 +149,7 @@ public class OrganisationChart {
         }
         //draw the nodes under pos
         /*# YOUR CODE HERE */
+        //Recursively iterates through each node
         for(Position newPos : pos.getTeam()){
             drawTree(newPos);
         }
@@ -164,25 +165,29 @@ public class OrganisationChart {
      */
     private Position findPosition(double x, double y, Position pos){
         /*# YOUR CODE HERE */
-        ArrayList<Position> posList;
-        posList = new ArrayList<>();
-        if(pos.on(x,y)){
-            return pos;
-        }
+        //Creates list for positions to save, to grab top layer position.
+        ArrayList<Position> posList = new ArrayList<>();
 
+        //If the position is the top node
+        if(pos.on(x,y)){return pos;}
+
+        //Iterates through each node
         for(Position newPos : pos.getTeam()){
+            //if new pos has been clicked on, add to pos list
             if(newPos.on(x, y)){
                 posList.add(newPos);
             }
+
+            //Checks current pos, if returns !null, add to poslist
             Position returned = findPosition(x, y, newPos);
-            
             if(returned != null){
                 posList.add(returned);
             }
             
         }
+
+        //If something has been added to list, display last node in list
         if(posList.size() != 0){
-            // int size = posList.size();
             return posList.get(posList.size()-1);
         }
 
@@ -195,6 +200,7 @@ public class OrganisationChart {
      */
     public void addNewPosition(Position newPos, Position target){
         /*# YOUR CODE HERE */
+        //if both aren't null, add to team
         if(newPos != null && target != null){
             target.addToTeam(newPos);
         }
@@ -215,11 +221,12 @@ public class OrganisationChart {
      */
     private void movePosition(Position pos, Position target) {
         if ((pos == null) || (target == null)){return;}   //invalid arguments.
-        if(inSubtree(target, pos)){return;}
         /*# YOUR CODE HERE */
-        if(pos == organisation){
-            return;
-        }
+
+        //If target is subtree, return
+        if(inSubtree(target, pos)){return;}
+        
+        //Removes pos from current location, adds to target location.
         pos.getManager().removeFromTeam(pos);
         target.addToTeam(pos);
 
@@ -233,6 +240,7 @@ public class OrganisationChart {
      */
     public void removePosition(Position pos){
         /*# YOUR CODE HERE */
+        //Removes pos from team
         pos.getManager().removeFromTeam(pos);
         
 
@@ -247,6 +255,7 @@ public class OrganisationChart {
      */
     private boolean inSubtree(Position pos, Position subtree) {
         /*# YOUR CODE HERE */
+        //Iterates through subtree, if pos exists inside subtree, return
         for(Position current : subtree.getTeam()){
             if(current == pos){
                 return true;
