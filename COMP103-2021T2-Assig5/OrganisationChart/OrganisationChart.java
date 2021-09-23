@@ -208,6 +208,7 @@ public class OrganisationChart {
      */
     private void movePosition(Position pos, Position target) {
         if ((pos == null) || (target == null)){return;}   //invalid arguments.
+        if(inSubtree(target, pos)){return;}
         /*# YOUR CODE HERE */
         if(pos == organisation){
             return;
@@ -239,6 +240,11 @@ public class OrganisationChart {
      */
     private boolean inSubtree(Position pos, Position subtree) {
         /*# YOUR CODE HERE */
+        for(Position current : subtree.getTeam()){
+            if(current == pos){
+                return true;
+            }
+        }
         return false;
 
     }
