@@ -13,6 +13,7 @@ import java.awt.Color;
 import java.util.*;
 import java.io.*;
 import java.nio.file.*;
+import java.util.ArrayList;
 
 /** <description of class OrganisationChart>
  */
@@ -134,7 +135,7 @@ public class OrganisationChart {
     //  METHODS FOR YOU TO COMPLETE ===============================
     
     // Drawing the tree  =========================================
-    /** [STEP 1:]
+    /** [STEP 1:]size
      *  Recursive method to draw all nodes in a subtree, given the root node.
      *  (The provided code just draws the root node;
      *  you need to make it draw all the nodes.)
@@ -163,20 +164,26 @@ public class OrganisationChart {
      */
     private Position findPosition(double x, double y, Position pos){
         /*# YOUR CODE HERE */
+        ArrayList<Position> posList;
+        posList = new ArrayList<>();
         if(pos.on(x,y)){
             return pos;
         }
 
         for(Position newPos : pos.getTeam()){
             if(newPos.on(x, y)){
-                return newPos;
+                posList.add(newPos);
             }
             Position returned = findPosition(x, y, newPos);
             
             if(returned != null){
-                return returned;
+                posList.add(returned);
             }
             
+        }
+        if(posList.size() != 0){
+            // int size = posList.size();
+            return posList.get(posList.size()-1);
         }
 
         return null;  // it wasn't found;
