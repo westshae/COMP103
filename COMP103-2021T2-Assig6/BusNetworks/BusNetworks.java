@@ -72,6 +72,7 @@ public class BusNetworks {
             }
             UI.print("\n");
         }
+        
 
     }
 
@@ -81,8 +82,20 @@ public class BusNetworks {
      * visited set, and then return the visited set
      */
     public Set<Town> findAllConnected(Town town) {
-        /*# YOUR CODE HERE */
-        return null;
+        HashSet<Town> visited = new HashSet<>();
+
+        findAllConnectedHelper(town, visited);
+
+        return visited;
+    }
+
+    private void findAllConnectedHelper(Town town, HashSet<Town> visited){
+        visited.add(town);
+        for(Town current : town.getNeighbours()){
+            if(visited.contains(current)){continue;}
+            findAllConnectedHelper(current, visited);
+
+        }
     }
 
     /**  COMPLETION
