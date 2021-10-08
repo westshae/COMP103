@@ -31,7 +31,20 @@ public class BusNetworks {
             UI.clearText();
             List<String> lines = Files.readAllLines(Path.of(filename));
             String firstLine = lines.remove(0);
-            /*# YOUR CODE HERE */
+
+            //Creates a list of towns, which are put into the busNetwork hashmap
+            String[] allTowns = firstLine.split(" ");
+            for(String name : allTowns){
+                busNetwork.put(name, new Town(name));
+            }
+
+            //For all lines, add neighbour to town
+            for(String line : lines){
+                String[] splitLine = line.split(" ");
+                Town parent = busNetwork.get(splitLine[0]);
+                Town child = busNetwork.get(splitLine[1]);
+                parent.addNeighbour(child);
+            }
 
             UI.println("Loaded " + busNetwork.size() + " towns:");
 
