@@ -44,6 +44,7 @@ public class BusNetworks {
                 Town parent = busNetwork.get(splitLine[0]);
                 Town child = busNetwork.get(splitLine[1]);
                 parent.addNeighbour(child);
+                child.addNeighbour(parent);
             }
 
             UI.println("Loaded " + busNetwork.size() + " towns:");
@@ -66,12 +67,8 @@ public class BusNetworks {
 
             //Prints out the parent, plus all neighbours
             UI.print(town.getName() + " => ");
-            if(neighbours.size() == 0){
-                UI.print("none");
-            }else{
-                for(Town current : neighbours){
-                    UI.print(current.getName() + " ");
-                }
+            for(Town current : neighbours){
+                UI.print(current.getName() + " ");
             }
             UI.print("\n");
         }
