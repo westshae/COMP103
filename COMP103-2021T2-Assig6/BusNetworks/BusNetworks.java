@@ -59,6 +59,22 @@ public class BusNetworks {
     public void printNetwork() {
         UI.println("The current network: \n====================");
         /*# YOUR CODE HERE */
+        for(Map.Entry<String, Town> entry : busNetwork.entrySet()){
+            //Gets parent town and neighbours
+            Town town = entry.getValue();
+            Set<Town> neighbours = town.getNeighbours();
+
+            //Prints out the parent, plus all neighbours
+            UI.print(town.getName() + " => ");
+            if(neighbours.size() == 0){
+                UI.print("none");
+            }else{
+                for(Town current : neighbours){
+                    UI.print(current.getName() + " ");
+                }
+            }
+            UI.print("\n");
+        }
 
     }
 
