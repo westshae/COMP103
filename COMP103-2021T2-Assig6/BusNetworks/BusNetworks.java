@@ -11,6 +11,9 @@
 import ecs100.*;
 import java.io.*;
 import java.util.*;
+
+import javax.sound.midi.SysexMessage;
+
 import java.nio.file.*;
 
 public class BusNetworks {
@@ -81,7 +84,7 @@ public class BusNetworks {
      * Traverse the network from this node in the standard way, using a
      * visited set, and then return the visited set
      */
-    public Set<Town> findAllConnected(Town town) {
+    public HashSet<Town> findAllConnected(Town town) {
         HashSet<Town> visited = new HashSet<>();
 
         findAllConnectedHelper(town, visited);
@@ -94,7 +97,6 @@ public class BusNetworks {
         for(Town current : town.getNeighbours()){
             if(visited.contains(current)){continue;}
             findAllConnectedHelper(current, visited);
-
         }
     }
 
@@ -126,10 +128,32 @@ public class BusNetworks {
      * yet been printed out.
      */
     public void printConnectedGroups() {
-        UI.println("Groups of Connected Towns: \n================");
+        
         int groupNum = 1;
         /*# YOUR CODE HERE */
+        ArrayList<Town> targetSet = new ArrayList<Town>(busNetwork.values());
+        ArrayList<HashSet<Town>> groups = new ArrayList<>();
+        while(targetSet.size() > 0){
+            Town currentTown = targetSet.get(0);
+            HashSet<Town> currentGroup = findAllConnected(currentTown);
+            for(Town town2 : currentGroup){
+                targetSet.remove(town2);
+            }
+            groups.add(currentGroup);
+            groupNum++;
+        }
 
+        UI.println("Groups of Connected Towns: " + groupNum + "\n================");
+
+        for(int i = 0; i < groups.size(); i++){
+            HashSet<Town> towns = groups.get(i);
+
+            UI.print("Group " + (i+1) + ": ");
+            for(Town town : towns){
+                UI.print(town.getName() + " ");
+            }
+            UI.print("\n");
+        }
     }
 
     /**
