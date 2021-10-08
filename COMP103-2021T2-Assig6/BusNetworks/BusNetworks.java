@@ -111,6 +111,9 @@ public class BusNetworks {
         else {
             UI.println("\nFrom "+town.getName()+" you can get to:");
             /*# YOUR CODE HERE */
+            for(Town current : findAllConnected(town)){
+                UI.println(current.getName());
+            }
 
         }
 
