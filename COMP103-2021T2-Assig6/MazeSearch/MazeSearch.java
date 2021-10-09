@@ -61,11 +61,11 @@ public class MazeSearch {
         /*# YOUR CODE HERE */
         cell.visit();
         cell.draw(Color.yellow);
-        Iterator iterator = cell.iterator();
+        Iterator<MazeCell> iterator = cell.iterator();
         
         UI.sleep(25);
         while(iterator.hasNext()){
-            MazeCell current = (MazeCell) iterator.next();
+            MazeCell current = iterator.next();
             if(!current.isVisited()){
                 if(exploreFromCell(current)){
                     return true;
@@ -91,6 +91,26 @@ public class MazeSearch {
     public void exploreFromCellAll(MazeCell cell) {
         if (stopNow) { return; }    // exit if user clicked the stop now button
         /*# YOUR CODE HERE */
+        if (cell == maze.getGoal()) {
+            cell.draw(Color.blue);   // to indicate finding the goal
+            UI.sleep(1000);
+            return;
+        }
+        /*# YOUR CODE HERE */
+        cell.visit();
+        cell.draw(Color.yellow);
+        Iterator<MazeCell> iterator = cell.iterator();
+        
+        UI.sleep(25);
+        while(iterator.hasNext()){
+            MazeCell current = iterator.next();
+            if(!current.isVisited()){
+                current.draw(Color.yellow);
+                exploreFromCellAll(current);
+            }
+        }
+        cell.unvisit();
+        cell.draw(Color.white);
 
     }
 
