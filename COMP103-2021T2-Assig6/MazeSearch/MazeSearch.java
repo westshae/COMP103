@@ -69,6 +69,8 @@ public class MazeSearch {
             if(!current.isVisited()){
                 if(exploreFromCell(current)){
                     return true;
+                }else{
+                    current.draw(Color.red);
                 }
             }
         }
