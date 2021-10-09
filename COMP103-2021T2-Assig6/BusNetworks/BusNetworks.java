@@ -11,9 +11,6 @@
 import ecs100.*;
 import java.io.*;
 import java.util.*;
-
-import javax.sound.midi.SysexMessage;
-
 import java.nio.file.*;
 
 public class BusNetworks {
@@ -86,17 +83,16 @@ public class BusNetworks {
      */
     public HashSet<Town> findAllConnected(Town town) {
         HashSet<Town> visited = new HashSet<>();
-
-        findAllConnectedHelper(town, visited);
+        findAllConnectedHelper(town, visited);//Calls helper function
 
         return visited;
     }
 
     private void findAllConnectedHelper(Town town, HashSet<Town> visited){
-        visited.add(town);
+        visited.add(town);//Adds current down to visited list
         for(Town current : town.getNeighbours()){
-            if(visited.contains(current)){continue;}
-            findAllConnectedHelper(current, visited);
+            if(visited.contains(current)){continue;}//if the neightbour is already included in visited, ignore it
+            findAllConnectedHelper(current, visited);//Recursive call on neighbour
         }
     }
 
@@ -113,6 +109,7 @@ public class BusNetworks {
         else {
             UI.println("\nFrom "+town.getName()+" you can get to:");
             /*# YOUR CODE HERE */
+            //For all connected downs, print their name
             for(Town current : findAllConnected(town)){
                 UI.println(current.getName());
             }
@@ -128,23 +125,24 @@ public class BusNetworks {
      * yet been printed out.
      */
     public void printConnectedGroups() {
-        
-        int groupNum = 1;
-        /*# YOUR CODE HERE */
+        UI.println("Groups of Connected Towns: \n================");
+
+        //Initializes ArrayLists used.
         ArrayList<Town> targetSet = new ArrayList<Town>(busNetwork.values());
         ArrayList<HashSet<Town>> groups = new ArrayList<>();
+
+        //While the targetSet has towns available
         while(targetSet.size() > 0){
+            //Gets the current "first in line" town, as others have been removed.
             Town currentTown = targetSet.get(0);
-            HashSet<Town> currentGroup = findAllConnected(currentTown);
-            for(Town town2 : currentGroup){
-                targetSet.remove(town2);
+            HashSet<Town> currentGroup = findAllConnected(currentTown);//Gets all connected towns
+            for(Town town : currentGroup){//For each connected town, remove them from the target set.
+                targetSet.remove(town);
             }
-            groups.add(currentGroup);
-            groupNum++;
+            groups.add(currentGroup);//Add all the connected towns to one group
         }
 
-        UI.println("Groups of Connected Towns: " + groupNum + "\n================");
-
+        //Prints each group, with their group number
         for(int i = 0; i < groups.size(); i++){
             HashSet<Town> towns = groups.get(i);
 

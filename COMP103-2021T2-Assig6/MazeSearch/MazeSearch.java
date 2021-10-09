@@ -59,6 +59,20 @@ public class MazeSearch {
             return true;
         }
         /*# YOUR CODE HERE */
+        cell.visit();
+        cell.draw(Color.yellow);
+        Iterator iterator = cell.iterator();
+        
+        UI.sleep(25);
+        while(iterator.hasNext()){
+            MazeCell current = (MazeCell) iterator.next();
+            if(!current.isVisited()){
+                if(exploreFromCell(current)){
+                    return true;
+                }
+            }
+        }
+        return false;
 
     }
 
