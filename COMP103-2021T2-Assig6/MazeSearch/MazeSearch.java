@@ -59,17 +59,19 @@ public class MazeSearch {
             return true;
         }
         /*# YOUR CODE HERE */
+        //Makes cell visited/yellow
         cell.visit();
         cell.draw(Color.yellow);
-        Iterator<MazeCell> iterator = cell.iterator();
-        
+
+        //Iterate through cell neighbours
         UI.sleep(25);
+        Iterator<MazeCell> iterator = cell.iterator();
         while(iterator.hasNext()){
             MazeCell current = iterator.next();
-            if(!current.isVisited()){
-                if(exploreFromCell(current)){
+            if(!current.isVisited()){//If the current neighbour isn't visisted, recursive search it.
+                if(exploreFromCell(current)){//If it found a goal, draw line as yellow
                     return true;
-                }else{
+                }else{//Else, draw line as red
                     current.draw(Color.red);
                 }
             }
@@ -96,19 +98,20 @@ public class MazeSearch {
             UI.sleep(1000);
             return;
         }
-        /*# YOUR CODE HERE */
+        //Visits/colours cell yellow
         cell.visit();
         cell.draw(Color.yellow);
-        Iterator<MazeCell> iterator = cell.iterator();
-        
+
+        //Iterates through neighbours
         UI.sleep(25);
+        Iterator<MazeCell> iterator = cell.iterator();
         while(iterator.hasNext()){
             MazeCell current = iterator.next();
-            if(!current.isVisited()){
-                current.draw(Color.yellow);
+            if(!current.isVisited()){//If neighbour not visited, recursive search.
                 exploreFromCellAll(current);
             }
         }
+        //After testing line, unvisit/draw white
         cell.unvisit();
         cell.draw(Color.white);
 
@@ -119,7 +122,6 @@ public class MazeSearch {
      * Use Breadth first search.
      */
     public void exploreFromCellShortest(MazeCell start) {
-        /*# YOUR CODE HERE */
 
     }
 
